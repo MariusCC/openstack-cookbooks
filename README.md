@@ -1,8 +1,8 @@
 Description
 ===========
-This is based on the work of Anso Labs' OpenStack-Cookbooks (https://github.com/ansolabs/openstack-cookbooks).
+The goal for this set of cookbooks is to provide a set of roles and cookbooks to deploy OpenStack Compute and Object Storage (Nova and Swift respectively) with Chef.
 
-The goal for this set of cookbooks is to provide a set of roles and cookbooks to deploy OpenStack Compute and Object Storage (Nova and Swift respectively) with Chef. The plan is to provide a Bexar-release branch and then continue development on a Cactus branch.
+This Chef repository is based on the work of Anso Labs' OpenStack-Cookbooks (https://github.com/ansolabs/openstack-cookbooks). It is currently intended for deploying the point-release codenamed "Bexar", other branches will be added in time for the next release "Cactus" as well as on-going development branches.
 
 Instructions
 ============
@@ -29,6 +29,8 @@ Requirements
 ============
 Written and tested with Ubuntu 10.10 and Chef 0.9.12.
 
+MOVE MOST OF THIS INTO COOKBOOKS
+
 Attributes
 ==========
 Attributes under the `openstack` namespace.
@@ -44,6 +46,9 @@ Data Bags
 
 Roles
 =====
+rabbitmq-server
+---------------
+Installs RabbitMQ with the Opscode cookbook.
 
 Usage
 =====
