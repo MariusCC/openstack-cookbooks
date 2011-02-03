@@ -50,4 +50,7 @@ end
   end
 end
 
-execute "touch /var/lib/nova/setup"
+file "/var/lib/nova/setup" do
+  action :touch
+end
+
