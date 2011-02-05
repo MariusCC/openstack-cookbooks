@@ -2,7 +2,7 @@
 # Cookbook Name:: nova
 # Recipe:: common
 #
-# Copyright 2010, Opscode, Inc.
+# Copyright 2010, 2011 Opscode, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,16 +19,17 @@
 
 include_recipe "apt"
 
+#deb http://ppa.launchpad.net/nova-core/release/ubuntu maverick main 
+apt_repository "NovaCoreReleasePPA" do
+  uri "http://ppa.launchpad.net/nova-core/release/ubuntu"
+  distribution node["lsb"]["codename"]
+  components ["main"]
+  action :add
+end
+
 package "nova-common" do
   options "--force-yes -o Dpkg::Options::=\"--force-confdef\""
   action :install
-end
-
-directory "/etc/nova" do
-  owner "root"
-  group "root"
-  mode 0755
-  action :create
 end
 
 env_filter = ''
@@ -71,7 +72,7 @@ objectstores = nil
 unless Chef::Config[:solo]
   objectstores = search(:node, "recipes:nova\\:\\:objectstore#{env_filter}")
 end
-if objectstores
+if objectstores and (objectstores.length > 0)
   objectstore = objectstores[0]
   Chef::Log.info("Objectstore server found at #{objectstore[:nova][:my_ip]}")
 else
@@ -83,7 +84,7 @@ networks = nil
 unless Chef::Config[:solo]
   networks = search(:node, "recipes:nova\\:\\:network#{env_filter}")
 end
-if networks
+if networks and (networks.length > 0)
   network = networks[0]
   Chef::Log.info("Network server found at #{network[:nova][:my_ip]}")
 else
@@ -104,14 +105,8 @@ execute "nova-manage db sync" do
   action :nothing
 end
 
-file "/etc/default/nova-common" do
-  content <<-EOH
-# defaults file for all the nova services
-#
-# Setting this to 1 will allow the services to run, it is set to 0 by default
-# to prevent the services from running until they have been configured.
-ENABLED=1
-EOH
+cookbook_file "/etc/default/nova-common" do
+  source "nova-common"
   owner "root"
   group "root"
   mode 0644
@@ -124,11 +119,11 @@ template "/etc/nova/nova.conf" do
   group "root"
   mode 0644
   variables(
-    :sql_connection => sql_connection,
-    :rabbit_settings => rabbit_settings,
-    :s3_host => objectstore[:nova][:my_ip],
-    :flatdhcp => network[:nova][:flatdhcp]
-  )
+            :sql_connection => sql_connection,
+            :rabbit_settings => rabbit_settings,
+            :s3_host => objectstore[:nova][:my_ip],
+            :flatdhcp => network[:nova][:flatdhcp]
+            )
   notifies :run, resources(:execute => "nova-manage db sync"), :immediately
-  notifies :touch, resources(:file => "/etc/default/nova-common"), :immediately
+  notifies :create_if_missing, resources(:cookbook_file => "/etc/default/nova-common"), :immediately
 end
