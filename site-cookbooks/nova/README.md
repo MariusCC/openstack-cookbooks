@@ -12,6 +12,12 @@ Attributes
 ==========
 Attributes under the `nova` namespace.
 
+Definitions
+===========
+nova_package
+------------
+This handles installing nova packages generically and managing them as services. 
+
 Resources/Providers
 ===================
 

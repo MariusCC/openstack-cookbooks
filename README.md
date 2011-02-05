@@ -35,6 +35,10 @@ Update your `knife.rb` line to
 
 Roles
 =====
+nova-cloud-controller
+---------------------
+Cloud controller that runs the nova- services.
+
 rabbitmq-server
 ---------------
 Installs RabbitMQ with the Opscode cookbook.

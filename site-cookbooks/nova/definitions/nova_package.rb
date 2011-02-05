@@ -15,7 +15,7 @@ define :nova_package do
     end
     supports :status => true, :restart => true
     action :start
-    subscribes :restart, resources(:file => "/etc/default/nova-common")
+    subscribes :restart, resources(:cookbook_file => "/etc/default/nova-common")
   end
 
 end
