@@ -27,22 +27,11 @@ execute the funtional test suite.
 
 Requirements
 ============
-Written and tested with Ubuntu 10.10 and Chef 0.9.12.
+Written and tested with Ubuntu 10.10 and Chef 0.9.12. 
 
-MOVE MOST OF THIS INTO COOKBOOKS
+Update your `knife.rb` line to
 
-Attributes
-==========
-Attributes under the `openstack` namespace.
-
-Resources/Providers
-===================
-
-Recipes
-=======
-
-Data Bags
-=========
+    cookbook_path            ["#{current_dir}/../cookbooks", "#{current_dir}/../site-cookbooks"]
 
 Roles
 =====
@@ -50,8 +39,30 @@ rabbitmq-server
 ---------------
 Installs RabbitMQ with the Opscode cookbook.
 
+nova-base
+---------
+Installs `nova::common` recipe from the [Nova Core Release PPA](https://launchpad.net/~nova-core/+archive/release "Nova Core Release PPA")
+
 Usage
 =====
+Single Box
+----------
+Cloud Controller
+
+nova-cloud-controller
+
+nova-support-server role
+
+
+1. Install rabbitmq with `rabbitmq-server` role and uploaded `rabbitmq` cookbook.
+    knife node run_list add ubuntu1010.localdomain 'role[rabbitmq-server]'
+2. Nova packages in order.
+`nova-support-server` role installs `mysql-server` and `openldap-server` and `rabbitmq-server`
+
+
+`nova-base` role installs `nova::common` recipe
+
+sudo apt-get install nova-common nova-api nova-network nova-objectstore nova-scheduler nova-compute euca2ools unzip
 
 License
 =======

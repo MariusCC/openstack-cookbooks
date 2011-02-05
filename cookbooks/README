@@ -4,11 +4,18 @@ using knife, or remove this file to clone an upstream Git Repository.
 DEFINITELY USED
 apache - no changes
 apt - no changes
-build-essential - no changes
 mysql - ubuntu-10.10 templates
+nscd - no changes
 openldap - potentially modified
 openssl - no changes 
 rabbitmq - no changes
+openssh - no changes
+
+
+SOURCE BUILDS REQUIRE
+build-essential - no changes
+runit - no changes
+
 
 POTENTIALLY UNUSED
 bluepill - no changes
@@ -18,11 +25,8 @@ daemontools -  no changes
 erlang -  no changes
 java -  no changes
 nginx - looks like no changs, old version here 
-nscd - no changes
 ohai - no changes
-openssh - no changes
 rabbitmq_chef - no changes
-runit - no changes
 ucspi-tcp - no changes
 xml - no changes
 zlib - no changes
