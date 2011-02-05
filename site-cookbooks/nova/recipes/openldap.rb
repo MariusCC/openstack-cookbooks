@@ -18,7 +18,8 @@
 #
 
 include_recipe "openldap::server"
-include_recipe "python-ldap"
+
+package "python-ldap"
 
 ##
 # Nova includes special templates for this resources, so we override them.
@@ -47,13 +48,6 @@ cookbook_file "/etc/ldap/schema/nova.schema" do
   mode "0644"
 end
 
-cookbook_file "/etc/ldap/base.ldif" do
-  source "base.ldif"
-  owner "root"
-  group "root"
-  mode "0644"
-end
-
 bash "bootstrap_ldap" do
   code <<-EOH
     /etc/init.d/slapd stop
@@ -67,6 +61,13 @@ bash "bootstrap_ldap" do
     /etc/init.d/slapd start
   EOH
   action :nothing
-  subscribes :execute, resources(:cookbook_file => "/etc/ldap/base.ldif")
+end
+
+cookbook_file "/etc/ldap/base.ldif" do
+  source "base.ldif"
+  owner "root"
+  group "root"
+  mode "0644"
+  notifies :run, resources(:bash => "bootstrap_ldap"), :immediate
 end
 
