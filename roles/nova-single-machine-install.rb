@@ -1,5 +1,5 @@
-name "nova-cloud-controller"
-description "Cloud controller that runs the nova- services"
+name "nova-single-machine-install"
+description "Installs everything required to run Nova on a single machine"
 run_list(
          "recipe[apt]",
          "recipe[nova::mysql]",
@@ -9,5 +9,7 @@ run_list(
          "recipe[nova::api]",
          "recipe[nova::scheduler]",
          "recipe[nova::network]",
-         "recipe[nova::objectstore]"
+         "recipe[nova::objectstore]",
+         "recipe[nova::compute]",
+         "recipe[nova::setup]"
          )
