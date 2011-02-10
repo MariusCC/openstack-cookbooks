@@ -29,10 +29,6 @@ Requirements
 ============
 Written and tested with Ubuntu 10.10 and Chef 0.9.12. 
 
-Update your `knife.rb` line to
-
-    cookbook_path            ["#{current_dir}/../cookbooks", "#{current_dir}/../site-cookbooks"]
-
 Roles
 =====
 nova-cloud-controller
@@ -49,6 +45,9 @@ Installs `nova::common` recipe from the [Nova Core Release PPA](https://launchpa
 
 Usage
 =====
+
+Currently flatdhcp
+
 Single Box
 ----------
 Cloud Controller
