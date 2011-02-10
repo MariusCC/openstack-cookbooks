@@ -10,6 +10,10 @@ openldap - potentially modified
 openssl - no changes 
 rabbitmq - no changes
 openssh - no changes
+anso
+glance
+nova
+swift
 
 
 SOURCE BUILDS REQUIRE
