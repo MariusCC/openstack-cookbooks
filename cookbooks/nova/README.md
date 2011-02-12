@@ -16,13 +16,72 @@ Definitions
 ===========
 nova_package
 ------------
-This handles installing nova packages generically and managing them as services. 
+This handles installing nova packages generically and managing them as services.
 
 Resources/Providers
 ===================
 
 Recipes
 =======
+all
+---
+
+api
+---
+
+common
+------
+
+compute
+-------
+Provides the compute functionality, currently depends on KVM.
+
+creds
+-----
+Create Nova certifications, per http://wiki.openstack.org/NovaInstall/MultipleServer
+
+dashboard
+---------
+
+default
+-------
+
+filevg
+------
+
+finalize
+--------
+The last cleanup steps of the install.
+
+hostname
+--------
+
+mysql
+-----
+
+network
+-------
+
+objectstore
+-----------
+
+openldap
+--------
+
+rabbit
+------
+
+scheduler
+---------
+
+setup
+-----
+
+source
+------
+
+volume
+------
 
 Data Bags
 =========

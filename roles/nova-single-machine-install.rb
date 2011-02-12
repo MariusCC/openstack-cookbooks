@@ -11,5 +11,7 @@ run_list(
          "recipe[nova::network]",
          "recipe[nova::objectstore]",
          "recipe[nova::compute]",
-         "recipe[nova::setup]"
+         "recipe[nova::setup]",
+         "recipe[nova::creds]",
+         "recipe[nova::finalize]"
          )

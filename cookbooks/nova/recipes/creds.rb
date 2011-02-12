@@ -39,11 +39,25 @@ end
 
 package "unzip"
 
-execute "nova-manage project zipfile #{node[:nova][:project]} #{node[:nova][:user]} /var/lib/nova/nova.zip" do
+execute "nova-manage project zipfile #{node[:nova][:project]} #{node[:nova][:user]} #{node[:nova][:creds][:dir]}/nova.zip" do
   user 'nova'
+  not_if {File.exists?("#{node[:nova][:creds][:dir]}/nova.zip")}
 end
 
 execute "unzip -o /var/lib/nova/nova.zip -d #{node[:nova][:creds][:dir]}/" do
   user node[:nova][:creds][:user]
   group node[:nova][:creds][:group]
+  not_if {File.exists?("#{node[:nova][:creds][:dir]}/novarc")}
 end
+
+execute "cat #{node[:nova][:creds][:dir]}/novarc >> #{node[:nova][:creds][:dir]}/.bashrc" do
+  user node[:nova][:creds][:user]
+  not_if {File.exists?("#{node[:nova][:creds][:dir]}/.bashrc")}
+end
+
+#needed for sudo'ing commands as nova
+execute "ln -s #{node[:nova][:creds][:dir]}/.bashrc #{node[:nova][:creds][:dir]}/.profile" do
+  user node[:nova][:creds][:user]
+  not_if {File.exists?("#{node[:nova][:creds][:dir]}/.profile")}
+end
+
