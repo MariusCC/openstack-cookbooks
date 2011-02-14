@@ -31,27 +31,18 @@ services.each do |svc|
 end
 
 #Step 4 - Closing steps, and cleaning up
-cmd = Chef::ShellOut.new("sudo -i -u #{node[:nova][:creds][:user]} euca-describe-groups")
-groups = cmd.run_command
-
 execute "euca-authorize -P icmp -t -1:-1 default" do
   user node[:nova][:creds][:user]
-  not_if {groups.stdout.include?("icmp")}
+  returns [0,1]
 end
 
 execute "euca-authorize -P tcp -p 22 default" do
   user node[:nova][:creds][:user]
-  not_if {groups.stdout.include?("tcp")}
+  returns [0,1]
 end
 
-ruby_block "dnsmasq" do
-  block do
-    cmd = Chef::ShellOut.new("pgrep dnsmasq")
-    processes = cmd.run_command
-    if processes.stdout.include?("dnsmasq")
-      execute "killall dnsmasq"
-    end
-  end
+execute "killall dnsmasq" do
+  returns [0,1]
 end
   
 service "nova-network" do
