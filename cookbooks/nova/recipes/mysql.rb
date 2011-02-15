@@ -2,7 +2,7 @@
 # Cookbook Name:: nova
 # Recipe:: mysql
 #
-# Copyright 2010, Opscode, Inc.
+# Copyright 2010-2011, Opscode, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -45,13 +45,15 @@ template "/etc/mysql/nova-grants.sql" do
   notifies :run, resources(:execute => "mysql-install-nova-privileges"), :immediately
 end
 
-execute "create #{node[:nova][:db][:database]} database" do
-  command "/usr/bin/mysqladmin -u root -p#{node[:mysql][:server_root_password]} create #{node[:nova][:db][:database]}"
-  not_if do
-    m = Mysql.new("localhost", "root", node[:mysql][:server_root_password])
-    m.list_dbs.include?(node[:nova][:db][:database])
-  end
+mysql_database "create #{node[:nova][:db][:database]} database" do
+  host "localhost"
+  username "root"
+  password node[:mysql][:server_root_password]
+  database node[:nova][:db][:database]
+  action :create_db
 end
+
+
 
 # save data so it can be found by search
 unless Chef::Config[:solo]

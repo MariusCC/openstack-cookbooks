@@ -33,7 +33,7 @@ end
 directory node[:nova][:creds][:dir] do
   owner node[:nova][:creds][:user]
   group node[:nova][:creds][:group]
-  mode "0700"
+  mode "0755"
   action :create
 end
 

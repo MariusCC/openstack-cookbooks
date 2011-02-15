@@ -33,7 +33,9 @@ execute "nova-manage project create #{node[:nova][:project]} #{node[:nova][:user
   not_if "nova-manage project list | grep #{node[:nova][:project]}"
 end
 
-execute "nova-manage network create 10.0.0.0/24 8 32" do
+
+execute "nova-manage network create 10.0.0.0/24 1 255" do
+#execute "nova-manage network create 10.0.0.0/24 8 32" do
   user 'nova'
   not_if { File.exists?("/var/lib/nova/setup") }
 end
@@ -43,6 +45,8 @@ execute "nova-manage floating create #{node[:nova][:hostname]} #{node[:nova][:fl
   not_if { File.exists?("/var/lib/nova/setup") }
 end
 
+#fix this
+#wget http://c2477062.cdn.cloudfiles.rackspacecloud.com/images.tgz
 (node[:nova][:images] or []).each do |image|
   execute "curl #{image} | tar xvz -C /var/lib/nova/images" do
     user 'nova'

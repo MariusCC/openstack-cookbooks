@@ -31,17 +31,21 @@ services.each do |svc|
 end
 
 #Step 4 - Closing steps, and cleaning up
-execute "euca-authorize -P icmp -t -1:-1 default" do
-  user node[:nova][:creds][:user]
-  returns [0,1]
+cmd = Chef::ShellOut.new("sudo -i -u #{node[:nova][:creds][:user]} euca-describe-groups")
+groups = cmd.run_command
+
+execute "su - #{node[:nova][:creds][:user]} -c 'euca-authorize -P icmp -t -1:-1 default'" do
+  user "root"
+  not_if {groups.stdout.include?("icmp")}
 end
 
-execute "euca-authorize -P tcp -p 22 default" do
-  user node[:nova][:creds][:user]
-  returns [0,1]
+execute "su - #{node[:nova][:creds][:user]} -c 'euca-authorize -P tcp -p 22 default'" do
+  user "root"
+  not_if {groups.stdout.include?("tcp")}
 end
 
 execute "killall dnsmasq" do
+  user "root"
   returns [0,1]
 end
   
