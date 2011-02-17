@@ -1,18 +1,18 @@
 Description
 ===========
-The goal for this set of cookbooks is to provide a set of roles and cookbooks to deploy OpenStack Compute and Object Storage (Nova and Swift respectively) with Chef.
+The goal for this set of cookbooks is to provide a set of roles and cookbooks to deploy OpenStack Compute, Object Storage and Image Registry and Delivery Service (Nova, Swift and Glance respectively) with Chef.
 
 This Chef repository is based on the work of Anso Labs' OpenStack-Cookbooks (https://github.com/ansolabs/openstack-cookbooks). It is currently intended for deploying the point-release codenamed "Bexar", other branches will be added in time for the next release "Cactus" as well as on-going development branches.
 
 Requirements
 ============
-Written and tested with Ubuntu 10.10 and Chef 0.9.12. 
+Written and tested with Ubuntu 10.04 and 10.10 and Chef 0.9.12. 
 
 Roles
 =====
 nova-single-machine-install
 ---------------------------
-Installs Nova on a single node with all dependencies.
+This role is intended for deploying Nova to a single node with all dependencies.
 
 nova-cloud-controller
 ---------------------
@@ -25,11 +25,27 @@ Installs RabbitMQ with the Opscode cookbook.
 Usage
 =====
 
+OpenStack Compute consists of 7 main components:
+the cloud controller represents state and interacts with all other components
+1) API Server
+2) Compute Controller
+
+
+
 Currently FlatDHCP
 
 Single Box
 ----------
 nova-single-machine-install
+
+
+knife node show crushinator.localdomain -a mysql
+    "server_root_password": "iLF5vOmB7LszpcrIKoDL"
+
+mysql -u$MYSQL_USER -p$MYSQL_PASS nova -e 'select * from services;'
+
+
+
 
 2 Boxes
 -------

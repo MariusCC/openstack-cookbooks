@@ -6,7 +6,7 @@ This Chef repository is based on the work of Anso Labs' OpenStack-Cookbooks (htt
 
 Requirements
 ============
-Written and tested with Ubuntu 10.10 and Chef 0.9.12. 
+Written and tested with Ubuntu 10.04 and 10.10 and Chef 0.9.12. 
 
 Attributes
 ==========

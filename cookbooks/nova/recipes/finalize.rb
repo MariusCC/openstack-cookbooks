@@ -59,3 +59,16 @@ execute "chmod g+rwx /dev/kvm"
 
 #If you want to use the 10.04 Ubuntu Enterprise Cloud images that are readily available at http://uec-images.ubuntu.com/releases/10.04/release/, you may run into delays with booting. Any server that does not have nova-api running on it needs this iptables entry so that UEC images can get metadata info. On compute nodes, configure the iptables with this next step:
 execute "iptables -t nat -A PREROUTING -d 169.254.169.254/32 -p tcp -m tcp --dport 80 -j DNAT --to-destination $NOVA_API_IP:8773"
+
+execute "euca-add-keypair mykey > mykey.priv" do
+  user node[:nova][:creds][:user]
+  not_if {File.exists?("#{node[:nova][:creds][:dir]}/mykey.priv")}
+end
+
+execute "chmod 0600 #{node[:nova][:creds][:dir]}/mykey.priv" do
+  user node[:nova][:creds][:user]
+end
+
+cmd = Chef::ShellOut.new("sudo -i -u #{node[:nova][:creds][:user]} nova-manage service list")
+services = cmd.run_command
+Chef::Log.info "\n#{services.stdout}"

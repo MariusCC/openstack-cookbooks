@@ -2,7 +2,6 @@ name "nova-single-machine-install"
 description "Installs everything required to run Nova on a single machine"
 run_list(
          "recipe[apt]",
-         "recipe[build-essential]",         
          "recipe[nova::mysql]",
          "recipe[nova::openldap]",
          "recipe[nova::rabbit]",

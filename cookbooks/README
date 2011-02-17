@@ -10,18 +10,15 @@ openldap - potentially modified
 openssl - no changes 
 rabbitmq - no changes
 openssh - no changes
-anso
-glance
-nova
-swift
-
-
-SOURCE BUILDS REQUIRE
-build-essential - no changes
+glance -duh
+nova - duh
+swift - duh
+build-essential - added ruby-dev, move patch up
 runit - no changes
 
 
 POTENTIALLY UNUSED
+anso - Anso specific scripts
 bluepill - no changes
 chef - no changes
 couchdb - no changes

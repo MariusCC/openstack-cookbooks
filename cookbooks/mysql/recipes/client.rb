@@ -17,6 +17,12 @@
 # limitations under the License.
 #
 
+rd = package "ruby-dev" do
+  action :nothing
+end
+
+rd.run_action(:install)
+
 p = package "mysql-devel" do
   package_name value_for_platform(
     [ "centos", "redhat", "suse", "fedora"] => { "default" => "mysql-devel" },
