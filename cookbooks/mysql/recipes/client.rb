@@ -25,22 +25,22 @@ rd.run_action(:install)
 
 p = package "mysql-devel" do
   package_name value_for_platform(
-    [ "centos", "redhat", "suse", "fedora"] => { "default" => "mysql-devel" },
-    "debian" => {
-      "5.0" => "libmysqlclient15-dev",
-      "5.0.1" => "libmysqlclient15-dev",
-      "5.0.2" => "libmysqlclient15-dev",
-      "5.0.3" => "libmysqlclient15-dev",
-      "5.0.4" => "libmysqlclient15-dev",
-      "5.0.5" => "libmysqlclient15-dev"
-    },
-    "ubuntu" => {
-      "8.04" => "libmysqlclient15-dev",
-      "8.10" => "libmysqlclient15-dev",
-      "9.04" => "libmysqlclient15-dev"
-    },
-    "default" => 'libmysqlclient-dev'
-  )
+                                  [ "centos", "redhat", "suse", "fedora"] => { "default" => "mysql-devel" },
+                                  "debian" => {
+                                    "5.0" => "libmysqlclient15-dev",
+                                    "5.0.1" => "libmysqlclient15-dev",
+                                    "5.0.2" => "libmysqlclient15-dev",
+                                    "5.0.3" => "libmysqlclient15-dev",
+                                    "5.0.4" => "libmysqlclient15-dev",
+                                    "5.0.5" => "libmysqlclient15-dev"
+                                  },
+                                  "ubuntu" => {
+                                    "8.04" => "libmysqlclient15-dev",
+                                    "8.10" => "libmysqlclient15-dev",
+                                    "9.04" => "libmysqlclient15-dev"
+                                  },
+                                  "default" => 'libmysqlclient-dev'
+                                  )
   action :nothing
 end
 
@@ -48,32 +48,40 @@ p.run_action(:install)
 
 o = package "mysql-client" do
   package_name value_for_platform(
-    [ "centos", "redhat", "suse", "fedora"] => { "default" => "mysql" },
-    "default" => "mysql-client"
-  )
+                                  [ "centos", "redhat", "suse", "fedora"] => { "default" => "mysql" },
+                                  "default" => "mysql-client"
+                                  )
   action :nothing
 end
 
 o.run_action(:install)
 
-r = gem_package "mysql" do
-  action :nothing
-end
-
-case node[:node]
-when "centos",
+case node[:platform]
+when "centos"
   if node[:platform_version].to_f >= 5.0
+    r = gem_package "mysql" do
+      action :nothing
+    end
     r.run_action(:install)
   else
-    package "ruby-mysql" do
-      action :install
+    p = package "ruby-mysql" do
+      action :nothing
     end
+    p.run_action(:install)
   end
+when "ubuntu", "debian"
+  p = package "libmysql-ruby" do
+    action :nothing
+  end
+  p.run_action(:install)
 when "redhat", "suse", "fedora"
-  package "ruby-mysql" do
-    action :install
+  p = package "ruby-mysql" do
+    action :nothing
   end
-
+  p.run_action(:install)
 else
+  r = gem_package "mysql" do
+    action :nothing
+  end
   r.run_action(:install)
 end
