@@ -2,7 +2,7 @@
 # Cookbook Name:: nova
 # Recipe:: setup
 #
-# Copyright 2010, Opscode, Inc.
+# Copyright 2010-2011, Opscode, Inc.
 # Copyright 2011, Anso Labs
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,7 +21,6 @@
 include_recipe "apt"
 
 package "euca2ools"
-package "curl"
 
 execute "nova-manage user admin #{node[:nova][:user]} #{node[:nova][:access_key]} #{node[:nova][:secret_key]}" do
   user 'nova'
@@ -33,9 +32,7 @@ execute "nova-manage project create #{node[:nova][:project]} #{node[:nova][:user
   not_if "nova-manage project list | grep #{node[:nova][:project]}"
 end
 
-
 execute "nova-manage network create 10.0.0.0/24 1 255" do
-#execute "nova-manage network create 10.0.0.0/24 8 32" do
   user 'nova'
   not_if { File.exists?("/var/lib/nova/setup") }
 end
@@ -43,15 +40,6 @@ end
 execute "nova-manage floating create #{node[:nova][:hostname]} #{node[:nova][:floating_range]}" do
   user 'nova'
   not_if { File.exists?("/var/lib/nova/setup") }
-end
-
-#fix this
-#wget http://c2477062.cdn.cloudfiles.rackspacecloud.com/images.tgz
-(node[:nova][:images] or []).each do |image|
-  execute "curl #{image} | tar xvz -C /var/lib/nova/images" do
-    user 'nova'
-    not_if { File.exists?("/var/lib/nova/setup") }
-  end
 end
 
 file "/var/lib/nova/setup" do
