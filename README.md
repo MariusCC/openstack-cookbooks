@@ -8,6 +8,67 @@ Requirements
 ============
 Written and tested with Ubuntu 10.04 and 10.10 and Chef 0.9.12. 
 
+Cookbooks
+=========
+The following cookbooks are currently used and/or required. 
+
+apache2
+-------
+knife cookbook site vendor apache2 0.99.1
+
+apt
+---
+knife cookbook site vendor apt 1.1.0
+
+build-essential
+---------------
+added ruby-dev, move patch up
+
+glance
+------
+
+
+mysql
+-----
+ubuntu-10.10 templates
+
+nova
+----
+
+nscd
+----
+knife cookbook site vendor nscd 0.7
+
+openldap
+--------
+knife cookbook site vendor openldap 0.9.3
+
+openssh
+-------
+knife cookbook site vendor 0.7
+
+openssl
+-------
+knife cookbook site vendor openssl 0.1
+
+pxe_dust
+--------
+Optional package for using PXE to bootstrap machines to a bare Ubuntu OS.
+knife cookbook site vendor pxe_dust 1.0.1
+
+rabbitmq
+--------
+knife cookbook site vendor rabbitmq 0.1
+
+runit
+-----
+knife cookbook site vendor runit 0.14.1
+
+swift
+-----
+
+
+
 Roles
 =====
 nova-single-machine-install
