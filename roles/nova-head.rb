@@ -1,6 +1,6 @@
 name "nova-head"
 
 run_list(
-    "role[nova-api]",
-    "role[nova-objectstore]"
+    "recipe[nova::api]",
+    "recipe[nova::objectstore]"
 )

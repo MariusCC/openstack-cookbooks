@@ -1,6 +1,6 @@
 name "nova-backend"
 
 run_list(
-    "role[nova-volume]",
-    "role[nova-compute]"
+#    "recipe[nova::volume]",
+    "recipe[nova::compute]"
 )
