@@ -20,15 +20,19 @@
 include_recipe "nova::common"
 nova_package("compute")
 
-if node[:nova][:compute_connection_type] == "kvm"
-  service "libvirt-bin" do
-    notifies :restart, resources(:service => "nova-compute"), :immediately
-  end
+service "libvirt-bin" do
+  notifies :restart, resources(:service => "nova-compute"), :immediately
+end
 
+if node[:nova][:libvirt_type] == "kvm"
   execute "modprobe kvm" do
     action :run
     notifies :restart, resources(:service => "libvirt-bin"), :immediately
   end
+
+  execute "chgrp kvm /dev/kvm"
+
+  execute "chmod g+rwx /dev/kvm"
 end
 
 execute "modprobe nbd" do

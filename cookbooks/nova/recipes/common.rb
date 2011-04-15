@@ -20,11 +20,13 @@
 include_recipe "apt"
 
 #deb http://ppa.launchpad.net/nova-core/release/ubuntu maverick main 
-apt_repository "NovaCoreReleasePPA" do
-  uri "http://ppa.launchpad.net/nova-core/release/ubuntu"
-  distribution node["lsb"]["codename"]
-  components ["main"]
-  action :add
+if node[:cc_config].nil?
+  apt_repository "NovaCoreReleasePPA" do
+    uri "http://ppa.launchpad.net/nova-core/release/ubuntu"
+    distribution node["lsb"]["codename"]
+    components ["main"]
+    action :add
+  end
 end
 
 package "nova-common" do
@@ -32,10 +34,16 @@ package "nova-common" do
   action :install
 end
 
-env_filter = ''
-if node[:app_environment]
-  env_filter = " AND app_environment:#{node[:app_environment]}"
+if node[:nova_environment].nil?
+  if node.run_list.roles.include?('nova-single-machine')
+    node[:nova_environment] = node[:fqdn]
+  else
+    node[:nova_environment] = "default"
+  end
+  node.save
 end
+
+env_filter = " AND nova_environment:#{node[:nova_environment]}"
 
 sql_connection = nil
 if node[:nova][:mysql]
@@ -43,23 +51,18 @@ if node[:nova][:mysql]
   package "python-mysqldb"
   mysqls = nil
 
-  unless Chef::Config[:solo]
-    mysqls = search(:node, "recipes:nova\\:\\:mysql#{env_filter}")
-  end
+  mysqls = search(:node, "recipes:nova\\:\\:mysql#{env_filter}")
   if mysqls and mysqls[0]
     mysql = mysqls[0]
     Chef::Log.info("Mysql server found at #{mysql[:mysql][:bind_address]}")
   else
     mysql = node
-    Chef::Log.info("Using local mysql at  #{mysql[:mysql][:bind_address]}")
+    Chef::Log.info("Using local mysql at #{mysql[:mysql][:bind_address]}")
   end
   sql_connection = "mysql://#{mysql[:nova][:db][:user]}:#{mysql[:nova][:db][:password]}@#{mysql[:mysql][:bind_address]}/#{mysql[:nova][:db][:database]}"
 end
 
-rabbits = nil
-unless Chef::Config[:solo]
-  rabbits = search(:node, "recipes:nova\\:\\:rabbit#{env_filter}")
-end
+rabbits = search(:node, "recipes:nova\\:\\:rabbit#{env_filter}")
 if rabbits and rabbits[0]
   rabbit = rabbits[0]
   Chef::Log.info("Rabbit server found at #{rabbit[:rabbitmq][:address]}")
@@ -68,10 +71,16 @@ else
   Chef::Log.info("Using local rabbit at #{rabbit[:rabbitmq][:address]}")
 end
 
-objectstores = nil
-unless Chef::Config[:solo]
-  objectstores = search(:node, "recipes:nova\\:\\:objectstore#{env_filter}")
+apis = search(:node, "recipes:nova\\:\\:api#{env_filter}")
+if apis and (apis.length > 0)
+  api = apis[0]
+  Chef::Log.info("Api server found at #{api[:nova][:my_ip]}")
+else
+  api = node
+  Chef::Log.info("Api server found at #{api[:nova][:my_ip]}")
 end
+
+objectstores = search(:node, "recipes:nova\\:\\:objectstore#{env_filter}")
 if objectstores and (objectstores.length > 0)
   objectstore = objectstores[0]
   Chef::Log.info("Objectstore server found at #{objectstore[:nova][:my_ip]}")
@@ -80,10 +89,7 @@ else
   Chef::Log.info("Objectstore server found at #{objectstore[:nova][:my_ip]}")
 end
 
-networks = nil
-unless Chef::Config[:solo]
-  networks = search(:node, "recipes:nova\\:\\:network#{env_filter}")
-end
+networks = search(:node, "recipes:nova\\:\\:network#{env_filter}")
 if networks and (networks.length > 0)
   network = networks[0]
   Chef::Log.info("Network server found at #{network[:nova][:my_ip]}")
@@ -91,6 +97,10 @@ else
   network = node
   Chef::Log.info("Network server found at #{network[:nova][:my_ip]}")
 end
+
+# if node[:nova][:network_ip].nil?
+#   node[:nova][:network_ip] = network
+# end
 
 rabbit_settings = {
   :address => rabbit[:rabbitmq][:address],
@@ -122,7 +132,7 @@ template "/etc/nova/nova.conf" do
             :sql_connection => sql_connection,
             :rabbit_settings => rabbit_settings,
             :s3_host => objectstore[:nova][:my_ip],
-            :flatdhcp => network[:nova][:flatdhcp]
+            :cc_host => api[:nova][:my_ip]
             )
   notifies :run, resources(:execute => "nova-manage db sync"), :immediately
   notifies :create_if_missing, resources(:cookbook_file => "/etc/default/nova-common"), :immediately

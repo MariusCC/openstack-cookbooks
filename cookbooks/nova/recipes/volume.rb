@@ -18,6 +18,7 @@
 #
 
 include_recipe "nova::common"
+package "iscsitarget"
 nova_package("volume")
 
 service "iscsitarget" do

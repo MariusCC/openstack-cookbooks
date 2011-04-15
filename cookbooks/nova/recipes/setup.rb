@@ -32,7 +32,7 @@ execute "nova-manage project create #{node[:nova][:project]} #{node[:nova][:user
   not_if "nova-manage project list | grep #{node[:nova][:project]}"
 end
 
-execute "nova-manage network create 10.0.0.0/24 1 255" do
+execute "nova-manage network create #{node[:nova][:proj_network]} #{node[:nova][:proj_network_count]} #{node[:nova][:proj_network_per_count_size]}" do
   user 'nova'
   not_if { File.exists?("/var/lib/nova/setup") }
 end
@@ -44,5 +44,6 @@ end
 
 file "/var/lib/nova/setup" do
   action :touch
+  not_if { File.exists?("/var/lib/nova/setup") }
 end
 

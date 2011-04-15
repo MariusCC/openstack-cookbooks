@@ -1,23 +1,41 @@
---dhcpbridge_flagfile=/etc/nova/nova.conf
---dhcpbridge=/usr/bin/nova-dhcpbridge
 --logdir=/var/log/nova
 --state_path=/var/lib/nova
 --verbose
 --my_ip=<%= node[:nova][:my_ip] %>
---public_interface=<%= node[:nova][:public_interface] %>
---vlan_interface=<%= node[:nova][:vlan_interface] %>
 --iscsi_ip_prefix=<%= node[:nova][:my_ip].split('.')[0..2].join('.') %>
 --s3_host=<%= @s3_host %>
-<% if @sql_connection %>--sql_connection=<%= @sql_connection %><% end %>
-<% if node[:nova][:libvirt_type] %>--libvirt_type=<%= node[:nova][:libvirt_type] %><% end %>
-<% if @rabbit_settings %>
+--cc_host=<%= @cc_host %>
+--ec2_url=http://<%= @cc_host %>:8773/services/Cloud
+--FAKE_subdomain=ec2
+--routing_source_ip=<%= @cc_host %>
+<% if @sql_connection -%>
+--sql_connection=<%= @sql_connection %>
+<% end -%>
+<% if node[:nova][:libvirt_type] %>
+--libvirt_type=<%= node[:nova][:libvirt_type] %>
+<% end -%>
+<% if @rabbit_settings -%>
 --rabbit_host=<%= @rabbit_settings[:address] %>
 --rabbit_port=<%= @rabbit_settings[:port] %>
 --rabbit_userid=<%= @rabbit_settings[:user] %>
 --rabbit_password=<%= @rabbit_settings[:password] %>
 --rabbit_virtual_host=<%= @rabbit_settings[:vhost] %>
-<% end %>
-<% if @flatdhcp %>
+<% end -%>
+<% if node[:nova][:network_type] == "flatdhcp" -%>
 --network_manager=nova.network.manager.FlatDHCPManager
 --flat_interface=<%= node[:nova][:flat_interface] %>
-<% end %>
+--flat_injected=<%= node[:nova][:flat_injected] %>
+--flat_network_dhcp_start=<%= node[:nova][:network_dhcp_start] %>
+--dhcpbridge_flagfile=/etc/nova/nova.conf
+--dhcpbridge=/usr/bin/nova-dhcpbridge
+--public_interface=<%= node[:nova][:public_interface] %>
+<% elsif node[:nova][:network_type] == "flat" -%>
+--fixed_range=<%= node[:nova][:fixed_range] %>
+--network_size=<%= node[:nova][:network_size] %>
+--network_manager=nova.network.manager.FlatManager
+--flat_network_bridge=<%= node[:nova][:flat_network_bridge] %>
+--flat_injected=<%= node[:nova][:flat_injected] %>
+<% elsif node[:nova][:network_type] == "vlandhcp" -%>
+--network_manager=nova.network.manager.VlanManager
+--vlan_interface=<%= node[:nova][:vlan_interface] %>
+<% end -%>

@@ -21,19 +21,40 @@
 
 default[:nova][:hostname] = "nova"
 default[:nova][:install_type] = "binary"
-default[:nova][:compute_connection_type] = "qemu"
+default[:nova][:libvirt_type] = "kvm"
 default[:nova][:creds][:user] = "nova"
 default[:nova][:creds][:group] = "nogroup"
 default[:nova][:creds][:dir] = "/var/lib/nova"
 default[:nova][:my_ip] = ipaddress
-default[:nova][:public_interface] = "eth1"
+default[:nova][:network_type] = "flat" # support "flatdhcp "flat" "dhcpvlan"
+#
+# Flat parameters
+#
+default[:nova][:fixed_range] = "192.168.124.0/24"
+default[:nova][:network_size] = "128"
+default[:nova][:flat_network_bridge] = "br100"
+default[:nova][:flat_injected] = "True"
+#
+# Flat DHCP Parameters
+#
+default[:nova][:public_interface] = "eth0"
 default[:nova][:vlan_interface] = "eth1"
-default[:nova][:flatdhcp] = true
-default[:nova][:flat_interface] = "eth1"
+default[:nova][:network_dhcp_start] = "192.168.124.128"
+#
+# DHCP Vlan Parameters
+# ???
+#
+default[:nova][:floating_range] = "10.128.0.0/24"
 default[:nova][:mysql] = true
 default[:nova][:images] = []
-default[:nova][:floating_range] = "10.128.0.0/24"
 default[:nova][:user] = "admin"
 default[:nova][:project] = "admin"
 set_unless[:nova][:access_key] = secure_password
 set_unless[:nova][:secret_key] = secure_password
+#
+# Default project networking
+#
+default[:nova][:proj_network] = "192.168.124.0/24"
+default[:nova][:proj_network_count] = "1"
+default[:nova][:proj_network_per_count_size] = "128"
+

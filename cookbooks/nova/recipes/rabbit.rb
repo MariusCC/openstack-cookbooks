@@ -46,7 +46,7 @@ end
 
 # save data so it can be found by search
 unless Chef::Config[:solo]
-  Chef::Log.info("Saving node data")
+  Chef::Log.info("Saving node rabbit data")
   node.save
 end
 

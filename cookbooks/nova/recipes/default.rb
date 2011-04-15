@@ -18,6 +18,5 @@
 # limitations under the License.
 #
 
-include_recipe "nova::all"
-include_recipe "nova::setup"
-include_recipe "nova::dashboard"
+# Nothing no-op recipe
+
