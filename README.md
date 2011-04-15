@@ -10,7 +10,7 @@ Written and tested with Ubuntu 10.04 and 10.10 and Chef 0.9.12 and later.
 
 Documentation
 =============
-http://bit.ly/OSChef has an extensive write-up with much more detail about using this repository.
+[http://bit.ly/OSChef](http://bit.ly/OSChef "Deploying OpenStack with Chef") has an extensive write-up with much more detail about using this repository.
 
 License
 =======
