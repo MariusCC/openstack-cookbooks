@@ -1,8 +1,8 @@
 #
-# Cookbook Name:: swift
+# Cookbook Name:: cloudfiles
 # Recipe:: default
 #
-# Copyright 2011, Opscode, Inc., Dell, Inc
+# Copyright 2010, Opscode, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,17 +19,34 @@
 
 include_recipe 'apt'
 
-package "swift"
+%w{swift-account swift-container swift-object xfsprogs}.each do |pkg|
+  package pkg
+end
 
-directory "/etc/swift" do
+template "/etc/rsyncd.conf" do
+  source "rsyncd.conf.erb"
+end
+
+cookbook_file "/etc/default/rsync" do
+  source "default-rsync"
+end
+
+service "rsync" do
+  action :start
+end
+
+%w{account-server object-server container-server}.each do |service|
+  template "/etc/swift/#{service}.conf" do
+    source "#{service}-conf.erb"
+    owner "swift"
+    group "swift"
+  end
+end
+
+cookbook_file "/usr/bin/start_swift_storage" do
+  source "start_swift_storage"
   owner "swift"
   group "swift"
   mode "0755"
-end
-
-template "/etc/swift/swift.conf" do
-  owner "swift"
-  group "swift"
-  source "swift.conf.erb"  
 end
 

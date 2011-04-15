@@ -1,0 +1,9 @@
+#!/bin/bash
+
+chown -R swift:swift /etc/swift
+
+swift-init auth start
+chown swift:swift /etc/swift/auth.db
+swift-init auth restart
+
+exit 0

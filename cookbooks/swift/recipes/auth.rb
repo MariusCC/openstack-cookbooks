@@ -1,8 +1,8 @@
 #
-# Cookbook Name:: swift
+# Cookbook Name:: cloudfiles
 # Recipe:: default
 #
-# Copyright 2011, Opscode, Inc., Dell, Inc
+# Copyright 2010, Opscode, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,17 +19,28 @@
 
 include_recipe 'apt'
 
-package "swift"
+%w{curl swift-auth}.each do |pkg|
+  package pkg
+end
 
-directory "/etc/swift" do
+bash "create auth cert" do
+  cwd "/etc/swift"
+  command "/usr/bin/openssl req -new -x509 -nodes -out cert.crt -keyout cert.key -batch"
+  not_if "test -e /etc/swift/cert.crt"
+end
+
+template "/etc/swift/auth-server.conf" do
+  source "auth-server.conf.erb"
+  mode "0644"
   owner "swift"
   group "swift"
+end
+
+cookbook_file "/usr/bin/start_swift_auth" do
+  source "start_swith_auth"
   mode "0755"
-end
-
-template "/etc/swift/swift.conf" do
   owner "swift"
   group "swift"
-  source "swift.conf.erb"  
 end
+
 

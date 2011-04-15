@@ -1,0 +1,27 @@
+#!/bin/bash
+
+chown -R swift:swift /etc/swift
+
+for directory in `ls /srv/node`
+do
+  mkdir -p /srv/node/$directory/objects
+  mkdir -p /srv/node/$directory/accounts
+  mkdir -p /srv/node/$directory/containers
+  mkdir -p /srv/node/$directory/tmp
+
+  chown -R swift:swift /srv/node/$directory/objects /srv/node/$directory/containers /srv/node/$directory/accounts /srv/node/$directory/tmp
+done
+
+swift-init object-server restart
+swift-init object-replicator restart
+swift-init object-updater restart
+swift-init object-auditor restart
+swift-init container-server restart
+swift-init container-replicator restart
+swift-init container-updater restart
+swift-init container-auditor restart
+swift-init account-server restart
+swift-init account-replicator restart
+swift-init account-auditor restart
+
+exit 0
