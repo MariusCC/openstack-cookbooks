@@ -1,13 +1,15 @@
 define :glance_service do
 
-  service_name="glance-#{params[:name]}"
-  pidfile="#{node[:glance][:pid_directory]}/#{service_name}.pid"
+  glance_name="glance-#{params[:name]}"
 
-  service service_name do
-    start_command "su -c '#{service_name} --flagfile=/etc/glance/glance.conf --pidfile=#{pidfile} --daemonize' glance"
-    stop_command "[ -f #{pidfile} ] && kill -s TERM $(cat #{pidfile})"
-    status_command "pgrep #{service_name}"
-    supports :status => true, :restart => false
+  service glance_name do
+    if (platform?("ubuntu") && node.platform_version.to_f >= 10.04)
+      restart_command "restart #{glance_name}"
+      stop_command "stop #{glance_name}"
+      start_command "start #{glance_name}"
+      status_command "status #{glance_name} | cut -d' ' -f2 | cut -d'/' -f1 | grep start"
+    end
+    supports :status => true, :restart => true
     action :start
     subscribes :restart, resources(:template => "/etc/glance/glance.conf")
   end
