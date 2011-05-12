@@ -72,14 +72,14 @@ template value_for_platform([ "centos", "redhat", "suse" , "fedora" ] => {"defau
   notifies :restart, resources(:service => "mysql"), :immediately
 end
 
-unless Chef::Config[:solo]
-  ruby_block "save node data" do
-    block do
-      node.save
-    end
-    action :create
-  end
-end
+# unless Chef::Config[:solo]
+#   ruby_block "save node data" do
+#     block do
+#       node.save
+#     end
+#     action :create
+#   end
+# end
 
 # set the root password on platforms 
 # that don't support pre-seeding
