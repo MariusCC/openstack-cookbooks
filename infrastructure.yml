@@ -1,0 +1,32 @@
+cookbooks:
+- apache2:
+    - 0.99.3
+- apt:
+    - 1.1.1
+- build-essential:
+    - 1.0.0
+- mysql:
+    - 1.0.3
+- nova:
+- nscd:
+    - 0.7.0
+- openssh:
+    - 0.8.1
+- openssl:
+    - 0.1.0
+- rabbitmq:
+    - 0.3
+- runit:
+    - 0.14.1
+roles:
+- nova-single-machine:
+- nova-multi-controller:
+- nova-multi-compute:
+- nova-ami-urls:
+nodes:
+- hypnotoad:
+  - recipe[apt::cacher] recipe[pxe_dust::server] recipe[tftp::server]
+  - -i ~/.ssh/mray.pem -x user --sudo -d ubuntu10.04-gems
+- crushinator.localdomain:
+  - recipe[apt::cacher-client] role[nova-single-machine]
+  - -i ~/.ssh/mray.pem -x user --sudo -d ubuntu10.04-gems

@@ -22,7 +22,7 @@ execute "mysql-install-nova-privileges" do
   action :nothing
 end
 
-node[:mysql][:bind_address] = node[:nova][:my_ip]
+node[:mysql][:bind_address] = Barclamp::Inventory.get_network_by_type(node, "admin").address
 
 Chef::Log.info("Mysql recipe included")
 

@@ -18,7 +18,7 @@
 #
 
 
-node[:rabbitmq][:address] = node[:nova][:my_ip]
+node[:rabbitmq][:address] = Barclamp::Inventory.get_network_by_type(node, "admin").address
 
 include_recipe "rabbitmq"
 
@@ -46,7 +46,7 @@ end
 
 # save data so it can be found by search
 unless Chef::Config[:solo]
-  Chef::Log.info("Saving node rabbit data")
+  Chef::Log.info("Saving node data")
   node.save
 end
 

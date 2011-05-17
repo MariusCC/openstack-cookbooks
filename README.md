@@ -6,11 +6,16 @@ This Chef repository was forked from Anso Labs' OpenStack-Cookbooks (https://git
 
 Requirements
 ============
-Written and tested with Ubuntu 10.04 and 10.10 and Chef 0.9.12 and later. 
+Written and tested with Ubuntu 10.04 and 10.10 and Chef 0.9.16 and later. 
+
+Usage
+=====
+The file `infrastructure.yml` may be used with the [http://bit.ly/spcwsl](Spiceweasel) command to generate the knife commands to download and install the cookbooks and upload the roles. 
 
 Documentation
 =============
 [http://bit.ly/OSChef](http://bit.ly/OSChef "Deploying OpenStack with Chef") has an extensive write-up with much more detail about using this repository.
+
 
 License
 =======
