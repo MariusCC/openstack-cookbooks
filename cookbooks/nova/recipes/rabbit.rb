@@ -2,7 +2,8 @@
 # Cookbook Name:: nova
 # Recipe:: rabbit
 #
-# Copyright 2010, Opscode, Inc.
+# Copyright 2010-2011, Opscode, Inc.
+# Copyright 2011, Dell, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,8 +18,8 @@
 # limitations under the License.
 #
 
-
-node[:rabbitmq][:address] = Barclamp::Inventory.get_network_by_type(node, "admin").address
+node[:rabbitmq][:address] = node[:nova][:my_ip]
+#node[:rabbitmq][:address] = Barclamp::Inventory.get_network_by_type(node, "admin").address
 
 include_recipe "rabbitmq"
 
@@ -45,8 +46,5 @@ execute "rabbitmqctl set_permissions -p #{node[:nova][:rabbit][:vhost]}  #{node[
 end
 
 # save data so it can be found by search
-unless Chef::Config[:solo]
-  Chef::Log.info("Saving node data")
-  node.save
-end
+node.save
 
