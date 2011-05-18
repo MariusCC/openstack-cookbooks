@@ -23,26 +23,26 @@ package "euca2ools"
 package "unzip"
 
 #user
-execute "nova-manage project zipfile #{node[:nova][:project]} #{node[:nova][:user]} #{node[:nova][:user][:dir]}/nova.zip" do
+execute "nova-manage project zipfile #{node[:nova][:project]} #{node[:nova][:user]} #{node[:nova][:user_dir]}/nova.zip" do
   user 'nova'
-  not_if {File.exists?("#{node[:nova][:user][:dir]}/nova.zip")}
+  not_if {File.exists?("#{node[:nova][:user_dir]}/nova.zip")}
 end
 
-execute "unzip -o /var/lib/nova/nova.zip -d #{node[:nova][:user][:dir]}/" do
+execute "unzip -o /var/lib/nova/nova.zip -d #{node[:nova][:user_dir]}/" do
   user node[:nova][:user]
-  group node[:nova][:user][:group]
-  not_if {File.exists?("#{node[:nova][:user][:dir]}/novarc")}
+  group node[:nova][:user_group]
+  not_if {File.exists?("#{node[:nova][:user_dir]}/novarc")}
 end
 
-execute "cat #{node[:nova][:user][:dir]}/novarc >> #{node[:nova][:user][:dir]}/.bashrc" do
+execute "cat #{node[:nova][:user_dir]}/novarc >> #{node[:nova][:user_dir]}/.bashrc" do
   user node[:nova][:user]
-  not_if {File.exists?("#{node[:nova][:user][:dir]}/.bashrc")}
+  not_if {File.exists?("#{node[:nova][:user_dir]}/.bashrc")}
 end
 
 #needed for sudo'ing commands as nova
-execute "ln -s #{node[:nova][:user][:dir]}/.bashrc #{node[:nova][:user][:dir]}/.profile" do
+execute "ln -s #{node[:nova][:user_dir]}/.bashrc #{node[:nova][:user_dir]}/.profile" do
   user node[:nova][:user]
-  not_if {File.exists?("#{node[:nova][:user][:dir]}/.profile")}
+  not_if {File.exists?("#{node[:nova][:user_dir]}/.profile")}
 end
 
 #project

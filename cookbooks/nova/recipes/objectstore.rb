@@ -17,5 +17,5 @@
 # limitations under the License.
 #
 
-include_recipe "nova::common"
+include_recipe "nova::config"
 nova_package("objectstore")

@@ -19,22 +19,22 @@
 # limitations under the License.
 #
 
-group node[:nova][:user][:group] do
-  group_name node[:nova][:user][:group]
+group node[:nova][:user_group] do
+  group_name node[:nova][:user_group]
   action :create
 end
 
 user node[:nova][:user] do
-  group node[:nova][:user][:group]
+  group node[:nova][:user_group]
   comment "Nova User"
-  home node[:nova][:user][:dir]
+  home node[:nova][:user_dir]
   shell "/bin/bash"
   action :create
 end
 
-directory node[:nova][:user][:dir] do
+directory node[:nova][:user_dir] do
   owner node[:nova][:user]
-  group node[:nova][:user][:group]
+  group node[:nova][:user_group]
   mode "0755"
   action :create
 end

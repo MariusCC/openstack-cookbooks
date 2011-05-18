@@ -22,7 +22,7 @@ Recipes
 api
 ---
 
-common
+config
 ------
 
 compute

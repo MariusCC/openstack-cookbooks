@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 
-include_recipe "nova::common"
+include_recipe "nova::config"
 package "iscsitarget"
 nova_package("volume")
 
