@@ -5,9 +5,9 @@ cookbooks:
 - apt:
     - 1.1.1
     - -E nova
-- build-essential:
-    - 1.0.0
-    - -E nova
+# - build-essential:
+#     - 1.0.0
+#     - -E nova
 - mysql:
     - 1.0.3
     - -E nova

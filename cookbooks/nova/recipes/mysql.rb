@@ -20,6 +20,7 @@
 
 include_recipe "mysql::server"
 
+#nova db user and root have same password
 node[:nova][:db][:password] = node[:mysql][:server_root_password]
 #node[:mysql][:bind_address] = Barclamp::Inventory.get_network_by_type(node, "admin").address
 node[:mysql][:bind_address] = node[:nova][:my_ip]
@@ -29,6 +30,7 @@ execute "mysql-install-nova-privileges" do
   action :nothing
 end
 
+#permissions for the nova user
 template "/etc/mysql/nova-grants.sql" do
   path "/etc/mysql/nova-grants.sql"
   source "grants.sql.erb"
@@ -43,6 +45,7 @@ template "/etc/mysql/nova-grants.sql" do
   notifies :run, resources(:execute => "mysql-install-nova-privileges"), :immediately
 end
 
+#creates empty nova database
 mysql_database "create #{node[:nova][:db][:database]} database" do
   host "localhost"
   username "root"
