@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 
-include_recipe "apt"
+#include_recipe "apt"
 
 #deb http://ppa.launchpad.net/nova-core/release/ubuntu maverick main 
 if node[:crowbar].nil?
@@ -42,9 +42,7 @@ if node[:nova][:mysql]
   package "python-mysqldb"
   mysqls = nil
 
-  unless Chef::Config[:solo]
-    mysqls = search(:node, "recipes:nova\\:\\:mysql#{env_filter}")
-  end
+  mysqls = search(:node, "recipes:nova\\:\\:mysql#{env_filter}")
   if mysqls and mysqls[0]
     mysql = mysqls[0]
     Chef::Log.info("Mysql server found at #{mysql[:mysql][:bind_address]}")
@@ -60,9 +58,7 @@ if node[:nova][:mysql]
 end
 
 rabbits = nil
-unless Chef::Config[:solo]
-  rabbits = search(:node, "recipes:nova\\:\\:rabbit#{env_filter}")
-end
+rabbits = search(:node, "recipes:nova\\:\\:rabbit#{env_filter}")
 if rabbits and rabbits[0]
   rabbit = rabbits[0]
   Chef::Log.info("Rabbit server found at #{rabbit[:rabbitmq][:address]}")
@@ -82,9 +78,7 @@ rabbit_settings = {
 }
 
 apis = nil
-unless Chef::Config[:solo]
-  apis = search(:node, "recipes:nova\\:\\:api#{env_filter}")
-end
+apis = search(:node, "recipes:nova\\:\\:api#{env_filter}")
 if apis and (apis.length > 0)
   api = apis[0]
   Chef::Log.info("Api server found at #{api[:nova][:my_ip]}")
@@ -94,9 +88,7 @@ else
 end
 
 objectstores = nil
-unless Chef::Config[:solo]
-  objectstores = search(:node, "recipes:nova\\:\\:objectstore#{env_filter}")
-end
+objectstores = search(:node, "recipes:nova\\:\\:objectstore#{env_filter}")
 if objectstores and (objectstores.length > 0)
   objectstore = objectstores[0]
   Chef::Log.info("Objectstore server found at #{objectstore[:nova][:my_ip]}")
@@ -106,9 +98,7 @@ else
 end
 
 networks = nil
-unless Chef::Config[:solo]
-  networks = search(:node, "recipes:nova\\:\\:network#{env_filter}")
-end
+networks = search(:node, "recipes:nova\\:\\:network#{env_filter}")
 if networks and (networks.length > 0)
   network = networks[0]
   Chef::Log.info("Network server found at #{network[:nova][:my_ip]}")

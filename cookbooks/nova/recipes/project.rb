@@ -1,9 +1,10 @@
 #
 # Cookbook Name:: nova
-# Recipe:: setup
+# Recipe:: project
 #
 # Copyright 2010-2011, Opscode, Inc.
 # Copyright 2011, Anso Labs
+# Copyright 2011, Dell, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,10 +19,33 @@
 # limitations under the License.
 #
 
-include_recipe "apt"
-
 package "euca2ools"
+package "unzip"
 
+#user
+execute "nova-manage project zipfile #{node[:nova][:project]} #{node[:nova][:user]} #{node[:nova][:user][:dir]}/nova.zip" do
+  user 'nova'
+  not_if {File.exists?("#{node[:nova][:user][:dir]}/nova.zip")}
+end
+
+execute "unzip -o /var/lib/nova/nova.zip -d #{node[:nova][:user][:dir]}/" do
+  user node[:nova][:user]
+  group node[:nova][:user][:group]
+  not_if {File.exists?("#{node[:nova][:user][:dir]}/novarc")}
+end
+
+execute "cat #{node[:nova][:user][:dir]}/novarc >> #{node[:nova][:user][:dir]}/.bashrc" do
+  user node[:nova][:user]
+  not_if {File.exists?("#{node[:nova][:user][:dir]}/.bashrc")}
+end
+
+#needed for sudo'ing commands as nova
+execute "ln -s #{node[:nova][:user][:dir]}/.bashrc #{node[:nova][:user][:dir]}/.profile" do
+  user node[:nova][:user]
+  not_if {File.exists?("#{node[:nova][:user][:dir]}/.profile")}
+end
+
+#project
 execute "nova-manage user admin #{node[:nova][:user]} #{node[:nova][:access_key]} #{node[:nova][:secret_key]}" do
   user 'nova'
   not_if "nova-manage user list | grep #{node[:nova][:user]}"

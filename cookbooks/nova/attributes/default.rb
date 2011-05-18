@@ -36,9 +36,9 @@ default[:nova][:libvirt_type] = "kvm"
 #shared settings
 default[:nova][:hostname] = "nova"
 default[:nova][:install_type] = "binary"
-default[:nova][:creds][:user] = "nova"
-default[:nova][:creds][:group] = "nogroup"
-default[:nova][:creds][:dir] = "/var/lib/nova"
+default[:nova][:user] = "nova"
+default[:nova][:user][:group] = "nogroup"
+default[:nova][:user][:dir] = "/var/lib/nova"
 default[:nova][:my_ip] = ipaddress
 default[:nova][:network_type] = "flat" # support "flatdhcp "flat" "dhcpvlan"
 

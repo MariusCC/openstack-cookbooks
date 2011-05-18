@@ -12,7 +12,7 @@ cookbooks:
     - 1.0.3
     - -E nova
 - nova:
-    - 0.2
+    - 0.3
     - -E nova
 - nscd:
     - 0.7
@@ -33,14 +33,15 @@ environments:
 - nova:
 roles:
 - nova-ami-urls:
+- nova-base:
+- nova-single-machine:
+- nova-multi-controller:
+- nova-db:
+- nova-rabbitmq-server:
+
 - nova-backend:
 - nova-cloud-controller:
-- nova-head:
 - nova-multi-compute:
-- nova-multi-controller:
-- nova-mysql-server:
-- nova-single-machine:
-- nova-super-user-setup:
 nodes:
 #- controller:
 #  - recipe[apt::cacher] role[nova-ami-urls] role[nova-multi-controller]

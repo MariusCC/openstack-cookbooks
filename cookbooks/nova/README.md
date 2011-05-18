@@ -19,9 +19,6 @@ Resources/Providers
 
 Recipes
 =======
-all
----
-
 api
 ---
 
@@ -32,15 +29,8 @@ compute
 -------
 Provides the compute functionality, currently depends on KVM.
 
-creds
------
-Create Nova certifications, per http://wiki.openstack.org/NovaInstall/MultipleServer
-
 dashboard
 ---------
-
-default
--------
 
 filevg
 ------
@@ -48,9 +38,6 @@ filevg
 finalize
 --------
 The last cleanup steps of the install.
-
-hostname
---------
 
 mysql
 -----
@@ -64,17 +51,21 @@ objectstore
 openldap
 --------
 
+project
+-------
+Create Nova certifications, per http://wiki.openstack.org/NovaInstall/MultipleServer
+Creates Projects
+
+
 rabbit
 ------
 
 scheduler
 ---------
 
-setup
------
-
-source
-------
+user
+----
+Creates the 'nova' user.
 
 volume
 ------
