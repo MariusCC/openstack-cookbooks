@@ -1,32 +1,50 @@
 cookbooks:
 - apache2:
     - 0.99.3
+    - -E nova
 - apt:
     - 1.1.1
+    - -E nova
 - build-essential:
     - 1.0.0
+    - -E nova
 - mysql:
     - 1.0.3
+    - -E nova
 - nova:
+    - 0.2
+    - -E nova
 - nscd:
-    - 0.7.0
+    - 0.7
+    - -E nova
 - openssh:
-    - 0.8.1
+    - 0.8.0
+    - -E nova
 - openssl:
-    - 0.1.0
+    - 0.1
+    - -E nova
 - rabbitmq:
-    - 0.3
+    - 1.0.0
+    - -E nova
 - runit:
     - 0.14.1
+    - -E nova
+environments:
+- nova:
 roles:
-- nova-single-machine:
-- nova-multi-controller:
-- nova-multi-compute:
 - nova-ami-urls:
+- nova-backend:
+- nova-cloud-controller:
+- nova-head:
+- nova-multi-compute:
+- nova-multi-controller:
+- nova-mysql-server:
+- nova-single-machine:
+- nova-super-user-setup:
 nodes:
-- hypnotoad:
-  - recipe[apt::cacher] recipe[pxe_dust::server] recipe[tftp::server]
-  - -i ~/.ssh/mray.pem -x user --sudo -d ubuntu10.04-gems
-- crushinator.localdomain:
-  - recipe[apt::cacher-client] role[nova-single-machine]
-  - -i ~/.ssh/mray.pem -x user --sudo -d ubuntu10.04-gems
+#- controller:
+#  - recipe[apt::cacher] role[nova-ami-urls] role[nova-multi-controller]
+#  - -i ~/.ssh/mray.pem -x user --sudo -d ubuntu10.04-gems -E nova
+#- compute:
+#  - recipe[apt::cacher-client] role[nova-multi-compute]
+#  - -i ~/.ssh/mray.pem -x user --sudo -d ubuntu10.04-gems -E nova
