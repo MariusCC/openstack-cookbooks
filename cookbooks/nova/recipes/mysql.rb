@@ -3,6 +3,7 @@
 # Recipe:: mysql
 #
 # Copyright 2010-2011, Opscode, Inc.
+# Copyright 2011, Dell, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,19 +18,16 @@
 # limitations under the License.
 #
 
+include_recipe "mysql::server"
+
+node[:nova][:db][:password] = node[:mysql][:server_root_password]
+#node[:mysql][:bind_address] = Barclamp::Inventory.get_network_by_type(node, "admin").address
+node[:mysql][:bind_address] = node[:nova][:my_ip]
+
 execute "mysql-install-nova-privileges" do
-  command "/usr/bin/mysql -u root -p#{node[:mysql][:server_root_password]} < /etc/mysql/nova-grants.sql"
+  command "/usr/bin/mysql -u root -p#{node[:nova][:db][:password]} < /etc/mysql/nova-grants.sql"
   action :nothing
 end
-
-node[:mysql][:bind_address] = Barclamp::Inventory.get_network_by_type(node, "admin").address
-
-Chef::Log.info("Mysql recipe included")
-
-include_recipe "mysql::server"
-require 'rubygems'
-Gem.clear_paths
-require 'mysql'
 
 template "/etc/mysql/nova-grants.sql" do
   path "/etc/mysql/nova-grants.sql"
@@ -38,25 +36,20 @@ template "/etc/mysql/nova-grants.sql" do
   group "root"
   mode "0600"
   variables(
-    :user     => node[:nova][:db][:user],
-    :password => node[:nova][:db][:password],
-    :database => node[:nova][:db][:database]
-  )
+            :user     => node[:nova][:db][:user],
+            :password => node[:nova][:db][:password],
+            :database => node[:nova][:db][:database]
+            )
   notifies :run, resources(:execute => "mysql-install-nova-privileges"), :immediately
 end
 
 mysql_database "create #{node[:nova][:db][:database]} database" do
   host "localhost"
   username "root"
-  password node[:mysql][:server_root_password]
+  password node[:nova][:db][:password]
   database node[:nova][:db][:database]
   action :create_db
 end
 
-
-
 # save data so it can be found by search
-unless Chef::Config[:solo]
-  Chef::Log.info("Saving node data")
-  node.save
-end
+node.save

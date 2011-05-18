@@ -2,7 +2,7 @@ Description
 ===========
 The goal for this set of cookbooks is to provide a set of roles and cookbooks to deploy OpenStack Compute, Object Storage and Image Registry and Delivery Service (Nova, Swift and Glance respectively) with Chef.
 
-This Chef repository was forked from Anso Labs' OpenStack-Cookbooks (https://github.com/ansolabs/openstack-cookbooks) shortly after "bexar" was released (it is no longer actively tracking that repository). It is intended for deploying the stable releases and currently supports "Bexar", "Cactus" will be added soon.
+This Chef repository was forked from Anso Labs' OpenStack-Cookbooks (https://github.com/ansolabs/openstack-cookbooks) shortly after "bexar" was released (it is no longer actively tracking that repository). It is intended for deploying the stable releases and currently supports "Cactus", other releases will be supported as they become available.
 
 Requirements
 ============
@@ -15,7 +15,6 @@ The file `infrastructure.yml` may be used with the [http://bit.ly/spcwsl](Spicew
 Documentation
 =============
 [http://bit.ly/OSChef](http://bit.ly/OSChef "Deploying OpenStack with Chef") has an extensive write-up with much more detail about using this repository.
-
 
 License
 =======

@@ -2,15 +2,11 @@ Description
 ===========
 Cookbook and recipes for deploying OpenStack Nova.
 
-This Chef repository is based on the work of Anso Labs' OpenStack-Cookbooks (https://github.com/ansolabs/openstack-cookbooks). It is currently intended for deploying the point-release codenamed "Bexar", other branches will be added in time for the next release "Cactus" as well as on-going development branches.
+This Chef repository was originally based on the work of Anso Labs' OpenStack-Cookbooks (https://github.com/ansolabs/openstack-cookbooks). It is intended for deploying the point-release codenamed "Cactus", other branches will be added with each release.
 
 Requirements
 ============
-Written and tested with Ubuntu 10.04 and 10.10 and Chef 0.9.12. 
-
-Attributes
-==========
-Attributes under the `nova` namespace.
+Written and tested with Ubuntu 10.04 and 10.10 and Chef 0.10.0. 
 
 Definitions
 ===========
@@ -82,12 +78,6 @@ source
 
 volume
 ------
-
-Data Bags
-=========
-
-Usage
-=====
 
 License
 =======
