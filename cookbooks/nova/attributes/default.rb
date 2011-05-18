@@ -23,15 +23,25 @@
 default[:nova][:db][:password] = "" #set by recipe
 default[:nova][:db][:user] = "nova"
 default[:nova][:db][:database] = "nova"
+default[:nova][:mysql] = false
 
+#rabbitmq settings
+set_unless[:nova][:rabbit][:password] = secure_password
+default[:nova][:rabbit][:user] = "nova"
+default[:nova][:rabbit][:vhost] = "/nova"
+
+#hypervisor settings
+default[:nova][:libvirt_type] = "kvm"
+
+#shared settings
 default[:nova][:hostname] = "nova"
 default[:nova][:install_type] = "binary"
-default[:nova][:libvirt_type] = "kvm"
 default[:nova][:creds][:user] = "nova"
 default[:nova][:creds][:group] = "nogroup"
 default[:nova][:creds][:dir] = "/var/lib/nova"
 default[:nova][:my_ip] = ipaddress
 default[:nova][:network_type] = "flat" # support "flatdhcp "flat" "dhcpvlan"
+
 #
 # Flat parameters
 #
@@ -50,7 +60,6 @@ default[:nova][:network_dhcp_start] = "192.168.124.128"
 # ???
 #
 default[:nova][:floating_range] = "10.128.0.0/24"
-default[:nova][:mysql] = true
 default[:nova][:images] = []
 default[:nova][:user] = "admin"
 default[:nova][:project] = "admin"

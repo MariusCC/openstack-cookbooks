@@ -4,3 +4,9 @@ description "Role for defining which database is used by Nova. Currently only My
 run_list(
          "recipe[nova::mysql]"
          )
+
+override_attributes(
+                    "nova" => {
+                      "mysql" => "true"
+                    }
+                    )
