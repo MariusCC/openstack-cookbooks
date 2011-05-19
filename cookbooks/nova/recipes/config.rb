@@ -28,6 +28,8 @@ apt_repository "NovaCoreReleasePPA" do
 end
 #end
 
+include_recipe "nova::user"
+
 package "nova-common" do
   options "--force-yes -o Dpkg::Options::=\"--force-confdef\""
   action :install
@@ -132,3 +134,15 @@ template "/etc/nova/nova.conf" do
   #notifies :create_if_missing, resources(:cookbook_file => "/etc/default/nova-common"), :immediately
 end
 
+execute "/etc/init.d/networking restart" do
+  action :nothing
+end
+
+#add bridge device
+# template "/etc/network/interfaces" do
+#   source "interfaces.erb"
+#   owner "root"
+#   group "root"
+#   mode 0644
+#   notifies :run, resources(:execute => "/etc/init.d/networking restart"), :immediately
+# end
