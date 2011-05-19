@@ -1,3 +1,6 @@
+#provides common package installation and service management
+#also assumes service restart ordering does not matter
+
 define :nova_package do
 
   nova_name="nova-#{params[:name]}"
@@ -14,7 +17,7 @@ define :nova_package do
       status_command "status #{nova_name} | cut -d' ' -f2 | cut -d'/' -f1 | grep start"
     end
     supports :status => true, :restart => true
-    action :start
+    action [:enable, :start]
     subscribes :restart, resources(:template => "/etc/nova/nova.conf")
   end
 
