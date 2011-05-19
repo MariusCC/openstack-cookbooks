@@ -2,7 +2,7 @@ define :nova_package do
 
   nova_name="nova-#{params[:name]}"
   package nova_name do
-#    options "--force-yes"
+    options "--force-yes"
     action :install
   end
 
@@ -15,7 +15,7 @@ define :nova_package do
     end
     supports :status => true, :restart => true
     action :start
-    subscribes :restart, resources(:cookbook_file => "/etc/default/nova-common")
+    subscribes :restart, resources(:template => "/etc/nova/nova.conf")
   end
 
 end

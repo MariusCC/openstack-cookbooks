@@ -102,7 +102,7 @@ if networks.length > 0
 else
   network = node
 end
-Chef::Log.info("Network server found at #{network[:nova][:my_ip]}")
+Chef::Log.info("Nova Network server found at #{network[:nova][:my_ip]}")
 
 execute "nova-manage db sync" do
   user node[:nova][:user]

@@ -5,6 +5,10 @@ run_list(
          "role[nova-db]",
          "role[nova-rabbitmq-server]",
          "recipe[nova::user]",
+         "recipe[nova::api]",
+         "recipe[nova::network]",
+         "recipe[nova::objectstore]",
+         "recipe[nova::scheduler]",
          "recipe[nova::project]",
          "recipe[nova::finalize]"
          "recipe[nova::api]",
