@@ -9,9 +9,7 @@ run_list(
          "recipe[nova::network]",
          "recipe[nova::objectstore]",
          "recipe[nova::scheduler]",
+
          "recipe[nova::project]",
          "recipe[nova::finalize]"
-         "recipe[nova::api]",
-         "recipe[nova::objectstore]",
-         "role[nova-cloud-controller]",
          )
