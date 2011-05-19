@@ -19,14 +19,41 @@
 # limitations under the License.
 #
 
+require 'chef/shell_out'
+
 package "euca2ools"
 package "unzip"
 
-#user
+#project
+execute "nova-manage user admin #{node[:nova][:user]} #{node[:nova][:access_key]} #{node[:nova][:secret_key]}" do
+  user node[:nova][:user]
+  not_if "nova-manage user list | grep #{node[:nova][:user]}"
+end
+
+execute "nova-manage project create #{node[:nova][:project]} #{node[:nova][:user]}" do
+  user node[:nova][:user]
+  not_if "nova-manage project list | grep #{node[:nova][:project]}"
+end
+
+execute "nova-manage network create #{node[:nova][:proj_network]} #{node[:nova][:proj_network_count]} #{node[:nova][:proj_network_per_count_size]}" do
+  user node[:nova][:user]
+  not_if { File.exists?("/var/lib/nova/setup") }
+end
+
+execute "nova-manage floating create #{node[:nova][:hostname]} #{node[:nova][:floating_range]}" do
+  user node[:nova][:user]
+  not_if { File.exists?("/var/lib/nova/setup") }
+end
+
+#user credentials and environment settings
 execute "nova-manage project zipfile #{node[:nova][:project]} #{node[:nova][:user]} #{node[:nova][:user_dir]}/nova.zip" do
-  user 'nova'
+  user node[:nova][:user]
   not_if {File.exists?("#{node[:nova][:user_dir]}/nova.zip")}
 end
+
+# [[ ! -f $novarc.bak ]] && cp $novarc{,.bak}
+# sed -i "s/127.0.0.1/$cc_host_ip/g" $novarc
+# echo 'done'
 
 execute "unzip -o /var/lib/nova/nova.zip -d #{node[:nova][:user_dir]}/" do
   user node[:nova][:user]
@@ -39,31 +66,19 @@ execute "cat #{node[:nova][:user_dir]}/novarc >> #{node[:nova][:user_dir]}/.bash
   not_if {File.exists?("#{node[:nova][:user_dir]}/.bashrc")}
 end
 
-#needed for sudo'ing commands as nova
 execute "ln -s #{node[:nova][:user_dir]}/.bashrc #{node[:nova][:user_dir]}/.profile" do
   user node[:nova][:user]
   not_if {File.exists?("#{node[:nova][:user_dir]}/.profile")}
 end
 
-#project
-execute "nova-manage user admin #{node[:nova][:user]} #{node[:nova][:access_key]} #{node[:nova][:secret_key]}" do
-  user 'nova'
-  not_if "nova-manage user list | grep #{node[:nova][:user]}"
+#generate a private key
+execute "euca-add-keypair --config #{node[:nova][:user_dir]}/novarc mykey > #{node[:nova][:user_dir]}/mykey.priv" do
+  user node[:nova][:user]
+  not_if {File.exists?("#{node[:nova][:user_dir]}/mykey.priv")}
 end
 
-execute "nova-manage project create #{node[:nova][:project]} #{node[:nova][:user]}" do
-  user 'nova'
-  not_if "nova-manage project list | grep #{node[:nova][:project]}"
-end
-
-execute "nova-manage network create #{node[:nova][:proj_network]} #{node[:nova][:proj_network_count]} #{node[:nova][:proj_network_per_count_size]}" do
-  user 'nova'
-  not_if { File.exists?("/var/lib/nova/setup") }
-end
-
-execute "nova-manage floating create #{node[:nova][:hostname]} #{node[:nova][:floating_range]}" do
-  user 'nova'
-  not_if { File.exists?("/var/lib/nova/setup") }
+execute "chmod 0600 #{node[:nova][:user_dir]}/mykey.priv" do
+  user node[:nova][:user]
 end
 
 file "/var/lib/nova/setup" do
@@ -71,3 +86,46 @@ file "/var/lib/nova/setup" do
   not_if { File.exists?("/var/lib/nova/setup") }
 end
 
+cmd = Chef::ShellOut.new("sudo -i -u #{node[:nova][:user]} euca-describe-groups")
+groups = cmd.run_command
+Chef::Log.debug groups
+
+execute "euca-authorize --config #{node[:nova][:user_dir]}/novarc -P icmp -t -1:-1 default" do
+  user node[:nova][:user]
+  not_if {groups.stdout.include?("icmp")}
+end
+
+execute "euca-authorize --config #{node[:nova][:user_dir]}/novarc -P tcp -p 22 default" do
+  user node[:nova][:user]
+  not_if {groups.stdout.include?("tcp")}
+end
+
+#debug output
+# execute "nova-manage service list" do
+#   user node[:nova][:user]
+# end
+
+#download and install AMIs
+(node[:nova][:images] or []).each do |image|
+  #get the filename of the image
+  filename = image.split('/').last
+  #execute "su - #{node[:nova][:user]} -c 'uec-publish-tarball #{node[:nova][:user_dir]}/images/#{filename} nova_amis x86_64'" do
+  execute "uec-publish-tarball #{node[:nova][:user_dir]}/images/#{filename} nova_amis x86_64" do
+    cwd "#{node[:nova][:user_dir]}/images/"
+    user "nova"
+    #user "root"
+    action :nothing
+  end
+  remote_file image do
+    source image
+    path "#{node[:nova][:user_dir]}/images/#{filename}"
+    owner node[:nova][:user]
+    #notifies :run, resources(:execute => "su - #{node[:nova][:user]} -c 'uec-publish-tarball #{node[:nova][:user_dir]}/images/#{filename} nova_amis x86_64'"), :immediate
+    notifies :run, resources(:execute => "uec-publish-tarball #{node[:nova][:user_dir]}/images/#{filename} nova_amis x86_64"), :immediately
+  end
+end
+
+# #debug output
+# execute "euca-describe-images" do
+#   user node[:nova][:user]
+# end
