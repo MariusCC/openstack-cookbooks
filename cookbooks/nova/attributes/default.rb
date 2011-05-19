@@ -36,7 +36,7 @@ default[:nova][:libvirt_type] = "kvm"
 #shared settings
 default[:nova][:hostname] = "nova"
 default[:nova][:install_type] = "binary"
-default[:nova][:user] = "admin"
+default[:nova][:user] = "nova"
 default[:nova][:user_group] = "nogroup"
 default[:nova][:user_dir] = "/var/lib/nova"
 default[:nova][:my_ip] = ipaddress
