@@ -71,8 +71,14 @@ execute "ln -s #{node[:nova][:user_dir]}/.bashrc #{node[:nova][:user_dir]}/.prof
   not_if {File.exists?("#{node[:nova][:user_dir]}/.profile")}
 end
 
+#for the euca2ools
+execute "ln -s #{node[:nova][:user_dir]}/.bashrc #{node[:nova][:user_dir]}/.eucarc" do
+  user node[:nova][:user]
+  not_if {File.exists?("#{node[:nova][:user_dir]}/.eucarc")}
+end
+
 #generate a private key
-execute "euca-add-keypair --config #{node[:nova][:user_dir]}/novarc mykey > #{node[:nova][:user_dir]}/mykey.priv" do
+execute "euca-add-keypair mykey > #{node[:nova][:user_dir]}/mykey.priv" do
   user node[:nova][:user]
   not_if {File.exists?("#{node[:nova][:user_dir]}/mykey.priv")}
 end
@@ -90,12 +96,12 @@ cmd = Chef::ShellOut.new("sudo -i -u #{node[:nova][:user]} euca-describe-groups"
 groups = cmd.run_command
 Chef::Log.debug groups
 
-execute "euca-authorize --config #{node[:nova][:user_dir]}/novarc -P icmp -t -1:-1 default" do
+execute "euca-authorize -P icmp -t -1:-1 default" do
   user node[:nova][:user]
   not_if {groups.stdout.include?("icmp")}
 end
 
-execute "euca-authorize --config #{node[:nova][:user_dir]}/novarc -P tcp -p 22 default" do
+execute "euca-authorize -P tcp -p 22 default" do
   user node[:nova][:user]
   not_if {groups.stdout.include?("tcp")}
 end
@@ -109,19 +115,27 @@ end
 (node[:nova][:images] or []).each do |image|
   #get the filename of the image
   filename = image.split('/').last
-  #execute "su - #{node[:nova][:user]} -c 'uec-publish-tarball #{node[:nova][:user_dir]}/images/#{filename} nova_amis x86_64'" do
-  execute "uec-publish-tarball #{node[:nova][:user_dir]}/images/#{filename} nova_amis x86_64" do
+  execute "uec-publish-tarball #{filename} nova_amis x86_64" do
     cwd "#{node[:nova][:user_dir]}/images/"
-    user "nova"
-    #user "root"
+    #need EC2_URL, EC2_ACCESS_KEY, EC2_SECRET_KEY, EC2_CERT, EC2_PRIVATE_KEY, S3_URL, EUCALYPTUS_CERT for environment
+    environment ({
+                   'EC2_URL' => "http://#{node[:nova][:api]}:8773/services/Cloud",
+                   'EC2_ACCESS_KEY' => node[:nova][:access_key],
+                   'EC2_SECRET_KEY' => node[:nova][:secret_key],
+                   'EC2_CERT_' => "#{node[:nova][:user_dir]}/cert.pem",
+                   'EC2_PRIVATE_KEY_' => "#{node[:nova][:user_dir]}/pk.pem",
+                   'S3_URL' => "http://#{node[:nova][:api]}:3333", #TODO need to put S3 into attributes instead of assuming API
+                   'EUCALYPTUS_CERT' => "#{node[:nova][:user_dir]}/cacert.pem"
+                 })
+    user node[:nova][:user]
     action :nothing
   end
   remote_file image do
     source image
     path "#{node[:nova][:user_dir]}/images/#{filename}"
     owner node[:nova][:user]
-    #notifies :run, resources(:execute => "su - #{node[:nova][:user]} -c 'uec-publish-tarball #{node[:nova][:user_dir]}/images/#{filename} nova_amis x86_64'"), :immediate
-    notifies :run, resources(:execute => "uec-publish-tarball #{node[:nova][:user_dir]}/images/#{filename} nova_amis x86_64"), :immediately
+    action :create_if_missing
+    notifies :run, resources(:execute => "uec-publish-tarball #{filename} nova_amis x86_64"), :immediately
   end
 end
 
