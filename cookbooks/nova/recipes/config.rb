@@ -85,6 +85,7 @@ else
   api = node
 end
 Chef::Log.info("Nova API server found at #{api[:nova][:my_ip]}")
+node[:nova][:api] = api[:nova][:my_ip]
 # api_ip = Barclamp::Inventory.get_network_by_type(api, "admin").address
 
 #Objectstore
@@ -111,14 +112,6 @@ execute "nova-manage db sync" do
   action :nothing
 end
 
-# cookbook_file "/etc/default/nova-common" do
-#   source "nova-common"
-#   owner "root"
-#   group "root"
-#   mode 0644
-#   action :nothing
-# end
-
 template "/etc/nova/nova.conf" do
   source "nova.conf.erb"
   owner "root"
@@ -131,7 +124,6 @@ template "/etc/nova/nova.conf" do
             :cc_host => api[:nova][:my_ip]
             )
   notifies :run, resources(:execute => "nova-manage db sync"), :immediately
-  #notifies :create_if_missing, resources(:cookbook_file => "/etc/default/nova-common"), :immediately
 end
 
 execute "/etc/init.d/networking restart" do

@@ -40,6 +40,8 @@ default[:nova][:user] = "nova"
 default[:nova][:user_group] = "nogroup"
 default[:nova][:user_dir] = "/var/lib/nova"
 default[:nova][:my_ip] = ipaddress
+default[:nova][:api] = ""
+default[:nova][:images] = []
 default[:nova][:network_type] = "flat" # support "flatdhcp "flat" "dhcpvlan"
 
 #
@@ -48,6 +50,9 @@ default[:nova][:network_type] = "flat" # support "flatdhcp "flat" "dhcpvlan"
 default[:nova][:fixed_range] = "192.168.124.0/24"
 default[:nova][:network_size] = "128"
 default[:nova][:flat_network_bridge] = "br100"
+#default[:nova][:netmask] = "#{node[:network][:interfaces][node[:nova][:public_interface]][:addresses][node[:nova][:my_ip]][:netmask]
+#default[:nova][:broadcast] = "#{node[:network][:interfaces][node[:nova][:public_interface]][:addresses][node[:nova][:my_ip]][:broadcast]
+#default[:nova][:dns_nameserver] = "#{node[:network][:interfaces][node[:nova][:public_interface]][:addresses][node[:nova][:my_ip]][:broadcast]
 default[:nova][:flat_injected] = "True"
 #
 # Flat DHCP Parameters
@@ -60,7 +65,6 @@ default[:nova][:network_dhcp_start] = "192.168.124.128"
 # ???
 #
 default[:nova][:floating_range] = "10.128.0.0/24"
-default[:nova][:images] = []
 default[:nova][:project] = "admin"
 set_unless[:nova][:access_key] = secure_password
 set_unless[:nova][:secret_key] = secure_password

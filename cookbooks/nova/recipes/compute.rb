@@ -2,7 +2,8 @@
 # Cookbook Name:: nova
 # Recipe:: compute
 #
-# Copyright 2010, Opscode, Inc.
+# Copyright 2010-2011, Opscode, Inc.
+# Copyright 2011, Dell, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,10 +19,15 @@
 #
 
 include_recipe "nova::config"
-nova_package("compute")
 
-service "libvirt-bin" do
-  notifies :restart, resources(:service => "nova-compute"), :immediately
+execute "modprobe nbd" do
+  action :run
+end
+
+# any server that does /NOT/ have nova-api running on it will need this
+# firewall rule for UEC images to be able to fetch metadata info
+if node[:nova][:api] != node[:nova][:my_ip]
+  execute "iptables -t nat -A PREROUTING -d 169.254.169.254/32 -p tcp -m tcp --dport 80 -j DNAT --to-destination #{node[:nova][:api]}:8773"
 end
 
 if node[:nova][:libvirt_type] == "kvm"
@@ -29,12 +35,15 @@ if node[:nova][:libvirt_type] == "kvm"
     action :run
     notifies :restart, resources(:service => "libvirt-bin"), :immediately
   end
-
+  
   execute "chgrp kvm /dev/kvm"
-
+  
   execute "chmod g+rwx /dev/kvm"
 end
 
-execute "modprobe nbd" do
-  action :run
+nova_package("compute")
+
+service "libvirt-bin" do
+  notifies :restart, resources(:service => "nova-compute"), :immediately
 end
+
