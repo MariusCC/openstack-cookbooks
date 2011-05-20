@@ -26,23 +26,20 @@ include_recipe "rabbitmq"
 # add a vhost to the queue
 execute "rabbitmqctl add_vhost #{node[:nova][:rabbit][:vhost]}" do
   not_if "rabbitmqctl list_vhosts | grep #{node[:nova][:rabbit][:vhost]}"
-  subscribes :run, resources(:service => "rabbitmq-server"), :immediately
-  action :nothing
+  action :run
 end
 
 # create user for the queue
 execute "rabbitmqctl add_user #{node[:nova][:rabbit][:user]} #{node[:nova][:rabbit][:password]}" do
   not_if "rabbitmqctl list_users | grep #{node[:nova][:rabbit][:user]}"
-  subscribes :run, resources(:service => "rabbitmq-server"), :immediately
-  action :nothing
+  action :run
 end
 
 # grant the mapper user the ability to do anything with the vhost
 # the three regex's map to config, write, read permissions respectively
 execute "rabbitmqctl set_permissions -p #{node[:nova][:rabbit][:vhost]}  #{node[:nova][:rabbit][:user]} \".*\" \".*\" \".*\"" do
   not_if "rabbitmqctl list_user_permissions #{node[:nova][:rabbit][:user]} | grep #{node[:nova][:rabbit][:vhost]}"
-  subscribes :run, resources(:service => "rabbitmq-server"), :immediately
-  action :nothing
+  action :run
 end
 
 # save data so it can be found by search
