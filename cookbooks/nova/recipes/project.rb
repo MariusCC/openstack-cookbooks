@@ -35,7 +35,7 @@ execute "nova-manage project create #{node[:nova][:project]} #{node[:nova][:user
   not_if "nova-manage project list | grep #{node[:nova][:project]}"
 end
 
-execute "nova-manage network create #{node[:nova][:proj_network]} #{node[:nova][:proj_network_count]} #{node[:nova][:proj_network_per_count_size]}" do
+execute "nova-manage network create #{node[:nova][:fixed_range]} #{node[:nova][:num_networks]} #{node[:nova][:network_size]}" do
   user node[:nova][:user]
   not_if { File.exists?("/var/lib/nova/setup") }
 end
@@ -50,10 +50,6 @@ execute "nova-manage project zipfile #{node[:nova][:project]} #{node[:nova][:use
   user node[:nova][:user]
   not_if {File.exists?("#{node[:nova][:user_dir]}/nova.zip")}
 end
-
-# [[ ! -f $novarc.bak ]] && cp $novarc{,.bak}
-# sed -i "s/127.0.0.1/$cc_host_ip/g" $novarc
-# echo 'done'
 
 execute "unzip -o /var/lib/nova/nova.zip -d #{node[:nova][:user_dir]}/" do
   user node[:nova][:user]

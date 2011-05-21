@@ -35,43 +35,26 @@ default[:nova][:libvirt_type] = "kvm"
 
 #shared settings
 default[:nova][:hostname] = "nova"
-default[:nova][:install_type] = "binary"
 default[:nova][:user] = "nova"
 default[:nova][:user_group] = "nogroup"
 default[:nova][:user_dir] = "/var/lib/nova"
 default[:nova][:my_ip] = ipaddress
 default[:nova][:api] = ""
-default[:nova][:images] = []
-default[:nova][:network_type] = "flat" # support "flatdhcp "flat" "dhcpvlan"
-
-#
-# Flat parameters
-#
-default[:nova][:fixed_range] = "192.168.124.0/24"
-default[:nova][:network_size] = "128"
-default[:nova][:flat_network_bridge] = "br100"
-#default[:nova][:netmask] = "#{node[:network][:interfaces][node[:nova][:public_interface]][:addresses][node[:nova][:my_ip]][:netmask]
-#default[:nova][:broadcast] = "#{node[:network][:interfaces][node[:nova][:public_interface]][:addresses][node[:nova][:my_ip]][:broadcast]
-#default[:nova][:dns_nameserver] = "#{node[:network][:interfaces][node[:nova][:public_interface]][:addresses][node[:nova][:my_ip]][:broadcast]
-default[:nova][:flat_injected] = "True"
-#
-# Flat DHCP Parameters
-#
-default[:nova][:public_interface] = "eth0"
-default[:nova][:vlan_interface] = "eth1"
-default[:nova][:network_dhcp_start] = "192.168.124.128"
-#
-# DHCP Vlan Parameters
-# ???
-#
-default[:nova][:floating_range] = "10.128.0.0/24"
 default[:nova][:project] = "admin"
+default[:nova][:images] = []
 set_unless[:nova][:access_key] = secure_password
 set_unless[:nova][:secret_key] = secure_password
-#
-# Default project networking
-#
-default[:nova][:proj_network] = "192.168.124.0/24"
-default[:nova][:proj_network_count] = "1"
-default[:nova][:proj_network_per_count_size] = "128"
+default[:nova][:network_type] = "flatdhcp" # support "flatdhcp "flat" "dhcpvlan"
+
+
+# Networking set for Flat DHCP
+default[:nova][:flat_dhcp_start] = "10.0.76.2"
+default[:nova][:public_interface] = "br100"
+default[:nova][:vlan_interface] = "eth0"
+
+default[:nova][:floating_range] = "192.168.76.128/28"
+default[:nova][:fixed_range] = "10.0.76.0/24"
+default[:nova][:num_networks] = 8
+default[:nova][:network_size] = 32
+default[:nova][:flat_interface] = "eth0"
 

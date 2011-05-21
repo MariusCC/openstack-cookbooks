@@ -18,7 +18,7 @@
 # limitations under the License.
 #
 
-#deb http://ppa.launchpad.net/nova-core/release/ubuntu maverick main 
+#deb http://ppa.launchpad.net/nova-core/release/ubuntu maverick main
 #if node[:crowbar].nil?
 apt_repository "NovaCoreReleasePPA" do
   uri "http://ppa.launchpad.net/nova-core/release/ubuntu"
@@ -28,7 +28,7 @@ apt_repository "NovaCoreReleasePPA" do
 end
 #end
 
-include_recipe "nova::user"
+#include_recipe "nova::user"
 
 package "nova-common" do
   options "--force-yes -o Dpkg::Options::=\"--force-confdef\""
@@ -77,7 +77,7 @@ rabbit_settings = {
   :vhost => rabbit[:nova][:rabbit][:vhost]
 }
 
-#API 
+#API
 apis = search(:node, "recipes:nova\\:\\:api#{env_filter}") || []
 if apis.length > 0
   api = apis[0]
@@ -126,9 +126,11 @@ template "/etc/nova/nova.conf" do
   notifies :run, resources(:execute => "nova-manage db sync"), :immediately
 end
 
-execute "/etc/init.d/networking restart" do
-  action :nothing
-end
+# package bridge-utils
+
+# execute "/etc/init.d/networking restart" do
+#   action :nothing
+# end
 
 #add bridge device
 # template "/etc/network/interfaces" do
