@@ -78,7 +78,7 @@ execute "ln -s #{node[:nova][:user_dir]}/.bashrc #{node[:nova][:user_dir]}/.euca
 end
 
 #generate a private key
-execute "euca-add-keypair mykey > #{node[:nova][:user_dir]}/mykey.priv" do
+execute "euca-add-keypair --config #{node[:nova][:user_dir]}/novarc mykey > #{node[:nova][:user_dir]}/mykey.priv" do
   user node[:nova][:user]
   not_if {File.exists?("#{node[:nova][:user_dir]}/mykey.priv")}
 end
@@ -96,12 +96,12 @@ cmd = Chef::ShellOut.new("sudo -i -u #{node[:nova][:user]} euca-describe-groups"
 groups = cmd.run_command
 Chef::Log.debug groups
 
-execute "euca-authorize -P icmp -t -1:-1 default" do
+execute "euca-authorize --config #{node[:nova][:user_dir]}/novarc -P icmp -t -1:-1 default" do
   user node[:nova][:user]
   not_if {groups.stdout.include?("icmp")}
 end
 
-execute "euca-authorize -P tcp -p 22 default" do
+execute "euca-authorize --config #{node[:nova][:user_dir]}/novarc -P tcp -p 22 default" do
   user node[:nova][:user]
   not_if {groups.stdout.include?("tcp")}
 end
