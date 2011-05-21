@@ -46,6 +46,8 @@ set_unless[:nova][:access_key] = secure_password
 set_unless[:nova][:secret_key] = secure_password
 default[:nova][:network_type] = "flatdhcp" # support "flatdhcp "flat" "dhcpvlan"
 
+--flat_interface=eth2
+--flat_injected=False
 
 # Networking set for Flat DHCP
 default[:nova][:flat_dhcp_start] = "10.0.76.2"
@@ -56,5 +58,5 @@ default[:nova][:floating_range] = "192.168.76.128/28"
 default[:nova][:fixed_range] = "10.0.76.0/24"
 default[:nova][:num_networks] = 8
 default[:nova][:network_size] = 32
-default[:nova][:flat_interface] = "eth0"
+default[:nova][:flat_interface] = "eth1"
 

@@ -126,6 +126,8 @@ template "/etc/nova/nova.conf" do
   notifies :run, resources(:execute => "nova-manage db sync"), :immediately
 end
 
+package "dnsmasq"
+
 # package bridge-utils
 
 # execute "/etc/init.d/networking restart" do
