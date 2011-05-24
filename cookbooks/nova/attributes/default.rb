@@ -60,7 +60,7 @@ default[:nova][:vlan_interface] = "eth0"
 
 default[:nova][:floating_range] = "192.168.76.128/28"
 default[:nova][:fixed_range] = "192.168.0.0/24"
-default[:nova][:num_networks] = 8
+default[:nova][:num_networks] = 2
 default[:nova][:network_size] = 128
 default[:nova][:flat_interface] = "eth1"
 
