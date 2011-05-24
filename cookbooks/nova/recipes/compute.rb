@@ -61,5 +61,5 @@ end
 # any server that does /NOT/ have nova-api running on it will need this
 # firewall rule for UEC images to be able to fetch metadata info
 if node[:nova][:api] != node[:nova][:my_ip]
-  execute "iptables -t nat -A PREROUTING -d 169.254.169.254/32 -p tcp -m tcp --dport 80 -j DNAT --to-destination #{node[:nova][:api]}:8773"
+  execute "iptables -t nat -A PREROUTING -d 169.254.169.254/32 -p tcp -m tcp --dport 80 -i #{node[:nova][:public_interface]} -j DNAT --to-destination #{node[:nova][:api]}:8773"
 end
