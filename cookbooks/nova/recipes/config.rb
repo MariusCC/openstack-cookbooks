@@ -142,3 +142,17 @@ template "/etc/network/interfaces" do
   mode 0644
   notifies :run, resources(:execute => "/etc/init.d/networking restart"), :immediately
 end
+
+#enable ipv4 forwarding
+execute "sysctl -p" do
+  user "root"
+  action :nothing
+end
+
+template "/etc/sysctl.conf" do
+  source "sysctl.conf.erb"
+  owner "root"
+  group "root"
+  mode 0644
+  notifies :run, resources(:execute => "sysctl -p"), :immediately
+end

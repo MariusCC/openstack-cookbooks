@@ -42,16 +42,3 @@ execute "killall dnsmasq" do
   subscribes :run, resources(:template => "/etc/nova/nova.conf")
   notifies :restart, resources(:service => "nova-network"), :immediately
 end
-
-execute "sysctl -p" do
-  user "root"
-  action :nothing
-end
-
-template "/etc/sysctl.conf" do
-  source "sysctl.conf.erb"
-  owner "root"
-  group "root"
-  mode 0644
-  notifies :run, resources(:execute => "sysctl -p"), :immediately
-end
