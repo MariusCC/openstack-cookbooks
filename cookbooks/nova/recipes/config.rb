@@ -128,7 +128,7 @@ end
 
 package "dnsmasq"
 
-package bridge-utils
+package "bridge-utils"
 
 execute "/etc/init.d/networking restart" do
   action :nothing
