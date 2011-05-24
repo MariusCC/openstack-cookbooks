@@ -128,17 +128,17 @@ end
 
 package "dnsmasq"
 
-# package bridge-utils
+package bridge-utils
 
-# execute "/etc/init.d/networking restart" do
-#   action :nothing
-# end
+execute "/etc/init.d/networking restart" do
+  action :nothing
+end
 
 #add bridge device
-# template "/etc/network/interfaces" do
-#   source "interfaces.erb"
-#   owner "root"
-#   group "root"
-#   mode 0644
-#   notifies :run, resources(:execute => "/etc/init.d/networking restart"), :immediately
-# end
+template "/etc/network/interfaces" do
+  source "interfaces.erb"
+  owner "root"
+  group "root"
+  mode 0644
+  notifies :run, resources(:execute => "/etc/init.d/networking restart"), :immediately
+end

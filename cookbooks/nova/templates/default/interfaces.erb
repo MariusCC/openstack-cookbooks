@@ -2,15 +2,17 @@
 auto lo
 iface lo inet loopback
 
+#Flat manager requires managing the br100
+#FlatDHCP creates its own bridge
 auto <%= node[:nova][:flat_network_bridge] %>
+#fix for DHCP some other time
 iface <%= node[:nova][:flat_network_bridge] %> inet static
 	bridge_ports  <%= node[:nova][:public_interface] %>
 	bridge_stp off
 	bridge_maxwait 0
 	bridge_fd 0
 	address <%= node[:nova][:my_ip] %>
-#	netmask <%= node[:network][:interfaces][node[:nova][:public_interface]][:addresses][node[:nova][:my_ip]][:netmask] %>
-  netmask 2555.255.255.0
-  broadcast <%= node[:network][:interfaces][node[:nova][:public_interface]][:addresses][node[:nova][:my_ip]][:broadcast] %>
-	gateway <%= node[:network][:default_gateway] %>
-	dns-nameservers $bridge_nameserver
+  netmask <%= node[:nova][:flat_netmask] %>
+  broadcast <%= node[:nova][:flat_broadcast] %>
+	gateway <%= node[:network][:flat_gateway] %>
+	dns-nameservers <%= node[:network][:flat_nameserver] %>
