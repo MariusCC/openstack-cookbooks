@@ -14,5 +14,5 @@ iface <%= node[:nova][:flat_network_bridge] %> inet static
 	address <%= node[:nova][:my_ip] %>
 	netmask <%= node[:nova][:flat_netmask] %>
 	broadcast <%= node[:nova][:flat_broadcast] %>
-	gateway <%= node[:network][:flat_gateway] %>
-	dns-nameservers <%= node[:network][:flat_nameserver] %>
+	gateway <%= node[:nova][:flat_gateway] %>
+	dns-nameservers <%= node[:nova][:flat_nameserver] %>
