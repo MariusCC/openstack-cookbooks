@@ -40,9 +40,11 @@ execute "nova-manage network create #{node[:nova][:fixed_range]} #{node[:nova][:
   not_if { File.exists?("/var/lib/nova/setup") }
 end
 
-execute "nova-manage floating create #{node[:nova][:hostname]} #{node[:nova][:floating_range]}" do
-  user node[:nova][:user]
-  not_if { File.exists?("/var/lib/nova/setup") }
+if node[:nova][:network_type] != "flat"
+  execute "nova-manage floating create #{node[:nova][:hostname]} #{node[:nova][:floating_range]}" do
+    user node[:nova][:user]
+    not_if { File.exists?("/var/lib/nova/setup") }
+  end
 end
 
 #user credentials and environment settings
