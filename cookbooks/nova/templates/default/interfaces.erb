@@ -12,7 +12,7 @@ iface <%= node[:nova][:flat_network_bridge] %> inet static
 	bridge_maxwait 0
 	bridge_fd 0
 	address <%= node[:nova][:my_ip] %>
-  netmask <%= node[:nova][:flat_netmask] %>
-  broadcast <%= node[:nova][:flat_broadcast] %>
-	gateway <%= node[:network][:flat_gateway] %>
+	netmask <%= node[:nova][:flat_netmask] %>
+	broadcast <%= node[:nova][:flat_broadcast] %>
+	ateway <%= node[:network][:flat_gateway] %>
 	dns-nameservers <%= node[:network][:flat_nameserver] %>
