@@ -134,13 +134,15 @@ execute "/etc/init.d/networking restart" do
   action :nothing
 end
 
-#add bridge device
-template "/etc/network/interfaces" do
-  source "interfaces.erb"
-  owner "root"
-  group "root"
-  mode 0644
-  notifies :run, resources(:execute => "/etc/init.d/networking restart"), :immediately
+if node[:nova][:network_type] == "flat"
+  #add bridge device
+  template "/etc/network/interfaces" do
+    source "interfaces.erb"
+    owner "root"
+    group "root"
+    mode 0644
+    notifies :run, resources(:execute => "/etc/init.d/networking restart"), :immediately
+  end
 end
 
 #enable ipv4 forwarding

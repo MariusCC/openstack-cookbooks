@@ -4,12 +4,7 @@
 --state_path=/var/lib/nova
 --lock_path=/var/lock/nova
 --verbose
---fixed_range=<%= node[:nova][:fixed_range] %>
---num_networks=<%= node[:nova][:num_networks] %>
---network_size=<%= node[:nova][:network_size] %>
 --my_ip=<%= node[:nova][:my_ip] %>
---public_interface=<%= node[:nova][:public_interface] %>
---vlan_interface=<%= node[:nova][:vlan_interface] %>
 --iscsi_ip_prefix=<%= node[:nova][:my_ip].split('.')[0..2].join('.') %>
 --s3_host=<%= @s3_host %>
 --cc_host=<%= @cc_host %>
@@ -28,8 +23,17 @@
 --rabbit_password=<%= @rabbit_settings[:password] %>
 --rabbit_virtual_host=<%= @rabbit_settings[:vhost] %>
 <% end -%>
+<% if node[:nova][:network_type] == "flat" -%>
+--network_manager=nova.network.manager.FlatManager
+--fixed_range=<%= node[:nova][:fixed_range] %>
+--num_networks=<%= node[:nova][:num_networks] %>
+--network_size=<%= node[:nova][:network_size] %>
+<% end -%>
 <% if node[:nova][:network_type] == "flatdhcp" -%>
 --network_manager=nova.network.manager.FlatDHCPManager
---flat_interface=<%= node[:nova][:flat_interface] %>
 --flat_network_dhcp_start=<%= node[:nova][:flat_dhcp_start] %>
 <% end -%>
+--public_interface=<%= node[:nova][:public_interface] %>
+--vlan_interface=<%= node[:nova][:vlan_interface] %>
+--flat_interface=<%= node[:nova][:flat_interface] %>
+--flat_network_dns=<%= node[:nova][:flat_dns] %>
