@@ -26,8 +26,6 @@
 <% if node[:nova][:network_type] == "flat" -%>
 --network_manager=nova.network.manager.FlatManager
 --fixed_range=<%= node[:nova][:fixed_range] %>
---num_networks=<%= node[:nova][:num_networks] %>
---network_size=<%= node[:nova][:network_size] %>
 <% end -%>
 <% if node[:nova][:network_type] == "flatdhcp" -%>
 --network_manager=nova.network.manager.FlatDHCPManager
