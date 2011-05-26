@@ -2,7 +2,7 @@
 # Cookbook Name:: nova
 # Recipe:: api
 #
-# Copyright 2010, Opscode, Inc.
+# Copyright 2010-2011, Opscode, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,10 +17,20 @@
 # limitations under the License.
 #
 
+require 'chef/shell_out'
+
 include_recipe "nova::config"
 
 nova_package("api")
 
+cmd = Chef::ShellOut.new("ip addr")
+ipaddr = cmd.run_command
+Chef::Log.debug ipaddr
+
 #work-around for nova-networking not working
-execute "ip addr add 169.254.169.254/32 dev br100"
+execute "ip addr add 169.254.169.254/32 dev br100" do
+  action :run
+  not_if {ipaddr.stdout.include?("inet 169.254.169.254/32 scope global br100")}
+end
+
 execute "iptables -t nat -A PREROUTING -s 0.0.0.0/0 -d 169.254.169.254/32 -p tcp -m tcp --dport 80 -j DNAT --to-destination #{node[:nova][:api]}:8773"
