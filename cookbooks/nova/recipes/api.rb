@@ -20,3 +20,6 @@
 include_recipe "nova::config"
 
 nova_package("api")
+
+#work-around for nova-networking not working
+execute "iptables -t nat -A PREROUTING -s 0.0.0.0/0 -d 169.254.169.254/32 -p tcp -m tcp --dport 80 -j DNAT --to-destination #{node[:nova][:api]}:8773"
