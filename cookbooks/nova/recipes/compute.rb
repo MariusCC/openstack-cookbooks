@@ -52,10 +52,42 @@ if node[:nova][:libvirt_type] == "kvm"
     action :run
     notifies :restart, resources(:service => "libvirt-bin"), :immediately
   end
-  
+
   execute "chgrp kvm /dev/kvm"
-  
+
   execute "chmod g+rwx /dev/kvm"
+end
+
+package "dnsmasq"
+package "bridge-utils"
+
+execute "/etc/init.d/networking restart" do
+  action :nothing
+end
+
+if node[:nova][:network_type] == "flat"
+  #add bridge device
+  template "/etc/network/interfaces" do
+    source "interfaces.erb"
+    owner "root"
+    group "root"
+    mode 0644
+    notifies :run, resources(:execute => "/etc/init.d/networking restart"), :immediately
+  end
+end
+
+#enable ipv4 forwarding
+execute "sysctl -p" do
+  user "root"
+  action :nothing
+end
+
+template "/etc/sysctl.conf" do
+  source "sysctl.conf.erb"
+  owner "root"
+  group "root"
+  mode 0644
+  notifies :run, resources(:execute => "sysctl -p"), :immediately
 end
 
 # any server that does /NOT/ have nova-api running on it will need this

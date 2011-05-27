@@ -125,36 +125,3 @@ template "/etc/nova/nova.conf" do
             )
   notifies :run, resources(:execute => "nova-manage db sync"), :immediately
 end
-
-package "dnsmasq"
-
-package "bridge-utils"
-
-execute "/etc/init.d/networking restart" do
-  action :nothing
-end
-
-if node[:nova][:network_type] == "flat"
-  #add bridge device
-  template "/etc/network/interfaces" do
-    source "interfaces.erb"
-    owner "root"
-    group "root"
-    mode 0644
-    notifies :run, resources(:execute => "/etc/init.d/networking restart"), :immediately
-  end
-end
-
-#enable ipv4 forwarding
-execute "sysctl -p" do
-  user "root"
-  action :nothing
-end
-
-template "/etc/sysctl.conf" do
-  source "sysctl.conf.erb"
-  owner "root"
-  group "root"
-  mode 0644
-  notifies :run, resources(:execute => "sysctl -p"), :immediately
-end
