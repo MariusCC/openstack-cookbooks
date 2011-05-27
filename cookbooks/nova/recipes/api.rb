@@ -23,14 +23,4 @@ include_recipe "nova::config"
 
 nova_package("api")
 
-cmd = Chef::ShellOut.new("ip addr")
-ipaddr = cmd.run_command
-Chef::Log.debug ipaddr
-
-#work-around for nova-networking not working
-execute "ip addr add 169.254.169.254/32 dev br100" do
-  action :run
-  not_if {ipaddr.stdout.include?("inet 169.254.169.254/32 scope global br100")}
-end
-
 execute "iptables -t nat -A PREROUTING -s 0.0.0.0/0 -d 169.254.169.254/32 -p tcp -m tcp --dport 80 -j DNAT --to-destination #{node[:nova][:api]}:8773"

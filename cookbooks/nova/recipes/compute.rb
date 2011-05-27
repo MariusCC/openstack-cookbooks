@@ -95,3 +95,13 @@ end
 if node[:nova][:api] != node[:nova][:my_ip]
   execute "iptables -t nat -A PREROUTING -d 169.254.169.254/32 -p tcp -m tcp --dport 80 -i #{node[:nova][:public_interface]} -j DNAT --to-destination #{node[:nova][:api]}:8773"
 end
+
+cmd = Chef::ShellOut.new("ip addr")
+ipaddr = cmd.run_command
+Chef::Log.debug ipaddr
+
+#work-around for nova-networking not working
+execute "ip addr add 169.254.169.254/32 dev br100" do
+  action :run
+  not_if {ipaddr.stdout.include?("inet 169.254.169.254/32 scope global br100")}
+end

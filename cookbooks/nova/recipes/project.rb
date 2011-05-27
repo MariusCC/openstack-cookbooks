@@ -141,3 +141,20 @@ end
 # execute "euca-describe-images" do
 #   user node[:nova][:user]
 # end
+
+#if not glance
+
+# in /images/
+
+# mkdir kernel image "mykernel_image"
+# json file from one with "aki"
+# make up id as "mykernel_id"
+
+# mkdir ami image "myami_image"
+# json file from one with "ami"
+# kernel_id "mykernel_id"
+# id "random"
+
+# execute "nova-manage image convert /var/lib/nova/images" do
+#   user 'nova'
+# end
