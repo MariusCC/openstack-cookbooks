@@ -9,7 +9,7 @@ package "glance" do
   action :install
 end
 
-[node[:glance][:logdir], node[:glance][:working_directory], File::dirname(node[:glance][:config_file]), node[:glance][:pid_directory]].each do |glance_dir|
+[node[:glance][:log_dir], node[:glance][:working_directory], File::dirname(node[:glance][:config_file]), node[:glance][:pid_directory]].each do |glance_dir|
 
   directory glance_dir do
     owner "glance"
