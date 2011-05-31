@@ -71,7 +71,7 @@ rabbit_address = rabbit[:rabbitmq][:address]
 # #rabbit_address = Barclamp::Inventory.get_network_by_type(rabbit, "admin").address if rabbit_address.nil? or rabbit_address == "0.0.0.0"
 rabbit_settings = {
   :address => rabbit_address,
-  :port => rabbit[:rabbitmq][:port],
+  :port => "5672",
   :user => rabbit[:nova][:rabbit][:user],
   :password => rabbit[:nova][:rabbit][:password],
   :vhost => rabbit[:nova][:rabbit][:vhost]
