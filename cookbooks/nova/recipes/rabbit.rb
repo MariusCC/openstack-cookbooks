@@ -18,8 +18,7 @@
 # limitations under the License.
 #
 
-node[:rabbitmq][:address] = node[:nova][:my_ip]
-#node[:rabbitmq][:address] = Barclamp::Inventory.get_network_by_type(node, "admin").address
+node.set[:nova][:rabbit][:address] = node[:nova][:my_ip]
 
 include_recipe "rabbitmq"
 

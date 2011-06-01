@@ -66,12 +66,11 @@ if rabbits.length > 0
 else
   rabbit = node
 end
-Chef::Log.info("RabbitMQ server found at #{rabbit[:rabbitmq][:address]}")
-rabbit_address = rabbit[:rabbitmq][:address]
+Chef::Log.info("RabbitMQ server found at #{rabbit[:nova][:rabbit][:address]}")
 # #rabbit_address = Barclamp::Inventory.get_network_by_type(rabbit, "admin").address if rabbit_address.nil? or rabbit_address == "0.0.0.0"
 rabbit_settings = {
-  :address => rabbit_address,
-  :port => "5672",
+  :address => rabbit[:nova][:rabbit][:address],
+  :port => rabbit[:rabbitmq][:port],
   :user => rabbit[:nova][:rabbit][:user],
   :password => rabbit[:nova][:rabbit][:password],
   :vhost => rabbit[:nova][:rabbit][:vhost]

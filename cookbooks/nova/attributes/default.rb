@@ -34,10 +34,10 @@ default[:nova][:rabbit][:vhost] = "/nova"
 default[:nova][:libvirt_type] = "kvm"
 
 #shared settings
-default[:nova][:hostname] = "nova"
-default[:nova][:user] = "nova"
+override[:nova][:user] = "nova"
+override[:nova][:user_dir] = "/var/lib/nova"
 default[:nova][:user_group] = "nogroup"
-default[:nova][:user_dir] = "/var/lib/nova"
+default[:nova][:hostname] = "nova"
 default[:nova][:my_ip] = ipaddress
 default[:nova][:api] = ""
 default[:nova][:project] = "admin"
@@ -49,7 +49,7 @@ default[:nova][:network_type] = "flat" # support "flatdhcp "flat" "dhcpvlan"
 default[:nova][:flat_interface] = "eth0"
 default[:nova][:flat_dns] = "8.8.4.4"
 
-# Networking set for Flat DHCP
+# Networking set for Flat networking
 default[:nova][:flat_network_bridge] = "br100"
 default[:nova][:public_interface] = "eth0"
 default[:nova][:flat_netmask] = "255.255.255.0"
