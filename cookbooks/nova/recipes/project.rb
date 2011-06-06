@@ -110,32 +110,32 @@ end
 # end
 
 #download and install AMIs
-(node[:nova][:images] or []).each do |image|
-  #get the filename of the image
-  filename = image.split('/').last
-  execute "uec-publish-tarball #{filename} nova_amis x86_64" do
-    cwd "#{node[:nova][:user_dir]}/images/"
-    #need EC2_URL, EC2_ACCESS_KEY, EC2_SECRET_KEY, EC2_CERT, EC2_PRIVATE_KEY, S3_URL, EUCALYPTUS_CERT for environment
-    environment ({
-                   'EC2_URL' => "http://#{node[:nova][:api]}:8773/services/Cloud",
-                   'EC2_ACCESS_KEY' => node[:nova][:access_key],
-                   'EC2_SECRET_KEY' => node[:nova][:secret_key],
-                   'EC2_CERT_' => "#{node[:nova][:user_dir]}/cert.pem",
-                   'EC2_PRIVATE_KEY_' => "#{node[:nova][:user_dir]}/pk.pem",
-                   'S3_URL' => "http://#{node[:nova][:api]}:3333", #TODO need to put S3 into attributes instead of assuming API
-                   'EUCALYPTUS_CERT' => "#{node[:nova][:user_dir]}/cacert.pem"
-                 })
-    user node[:nova][:user]
-    action :nothing
-  end
-  remote_file image do
-    source image
-    path "#{node[:nova][:user_dir]}/images/#{filename}"
-    owner node[:nova][:user]
-    action :create_if_missing
-    notifies :run, resources(:execute => "uec-publish-tarball #{filename} nova_amis x86_64"), :immediately
-  end
-end
+# (node[:nova][:images] or []).each do |image|
+#   #get the filename of the image
+#   filename = image.split('/').last
+#   execute "uec-publish-tarball #{filename} nova_amis x86_64" do
+#     cwd "#{node[:nova][:user_dir]}/images/"
+#     #need EC2_URL, EC2_ACCESS_KEY, EC2_SECRET_KEY, EC2_CERT, EC2_PRIVATE_KEY, S3_URL, EUCALYPTUS_CERT for environment
+#     environment ({
+#                    'EC2_URL' => "http://#{node[:nova][:api]}:8773/services/Cloud",
+#                    'EC2_ACCESS_KEY' => node[:nova][:access_key],
+#                    'EC2_SECRET_KEY' => node[:nova][:secret_key],
+#                    'EC2_CERT_' => "#{node[:nova][:user_dir]}/cert.pem",
+#                    'EC2_PRIVATE_KEY_' => "#{node[:nova][:user_dir]}/pk.pem",
+#                    'S3_URL' => "http://#{node[:nova][:api]}:3333", #TODO need to put S3 into attributes instead of assuming API
+#                    'EUCALYPTUS_CERT' => "#{node[:nova][:user_dir]}/cacert.pem"
+#                  })
+#     user node[:nova][:user]
+#     action :nothing
+#   end
+#   remote_file image do
+#     source image
+#     path "#{node[:nova][:user_dir]}/images/#{filename}"
+#     owner node[:nova][:user]
+#     action :create_if_missing
+#     notifies :run, resources(:execute => "uec-publish-tarball #{filename} nova_amis x86_64"), :immediately
+#   end
+# end
 
 # #debug output
 # execute "euca-describe-images" do

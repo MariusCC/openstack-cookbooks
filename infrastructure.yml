@@ -1,51 +1,32 @@
 cookbooks:
 - apache2:
     - 0.99.3
-    - -E nova
 - apt:
-    - 1.1.1
-    - -E nova
-# - build-essential:
-#     - 1.0.0
-#     - -E nova
+    - 1.1.2
 - mysql:
     - 1.0.3
-    - -E nova
 - nova:
     - 0.3
-    - -E nova
 - nscd:
     - 0.7
-    - -E nova
 - openssh:
     - 0.8.0
-    - -E nova
 - openssl:
     - 0.1
-    - -E nova
 - rabbitmq:
-    - 1.0.0
-    - -E nova
-- runit:
-    - 0.14.1
-    - -E nova
+    - 1.2.1
 environments:
 - nova:
 roles:
-- nova-ami-urls:
-- nova-base:
 - nova-single-machine:
-- nova-multi-controller:
 - nova-db:
 - nova-rabbitmq-server:
-
-- nova-backend:
-- nova-cloud-controller:
+- nova-multi-controller:
 - nova-multi-compute:
 nodes:
-#- controller:
-#  - recipe[apt::cacher] role[nova-ami-urls] role[nova-multi-controller]
-#  - -i ~/.ssh/mray.pem -x user --sudo -d ubuntu10.04-gems -E nova
-#- compute:
-#  - recipe[apt::cacher-client] role[nova-multi-compute]
-#  - -i ~/.ssh/mray.pem -x user --sudo -d ubuntu10.04-gems -E nova
+- controller:
+  - recipe[apt::cacher] [nova-multi-controller]
+  - -i ~/.ssh/mray.pem -x user --sudo -d ubuntu10.04-gems
+- compute:
+  - recipe[apt::cacher-client] role[nova-multi-compute]
+  - -i ~/.ssh/mray.pem -x user --sudo -d ubuntu10.04-gems
