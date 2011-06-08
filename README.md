@@ -8,6 +8,28 @@ Requirements
 ============
 Written and tested with Ubuntu 10.04 and 10.10 and Chef 0.9.16 and later. 
 
+openstack Data Bag
+==================
+In order to manage configuration of our OpenStack cloud, we will use the `openstack` data bag.
+
+```
+% knife data bag create openstack
+% knife data bag from file openstack data_bags/openstack/defaults.json
+```
+
+Where the contents of the included `defaults.json` are:
+
+```json
+{
+    "id": "defaults",
+    "images": [
+        "http://c0179148.cdn1.cloudfiles.rackspacecloud.com/ubuntu1010-UEC-localuser-image.tar.gz"
+    ]
+}
+```
+
+* `images`: List of the AMIs to load into the system. You may want to store these locally and update the item.
+
 Usage
 =====
 The file `infrastructure.yml` may be used with the [http://bit.ly/spcwsl](Spiceweasel) command to generate the knife commands to download and install the cookbooks and upload the roles. 

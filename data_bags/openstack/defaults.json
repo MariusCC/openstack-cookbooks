@@ -1,0 +1,6 @@
+{
+    "id": "defaults",
+    "images": [
+        "http://c0179148.cdn1.cloudfiles.rackspacecloud.com/ubuntu1010-UEC-localuser-image.tar.gz"
+    ]
+}

@@ -7,20 +7,22 @@ cookbooks:
     - 1.0.3
 - nova:
     - 0.3
-- nscd:
-    - 0.7
+# - nscd:
+#     - 0.7
 - openssh:
     - 0.8.0
 - openssl:
     - 0.1
 - rabbitmq:
     - 1.2.1
-environments:
-- nova:
+data bags:
+- openstack:
+  - defaults
 roles:
 - nova-single-machine:
 - nova-db:
 - nova-rabbitmq-server:
+- glance-single-machine:
 - nova-multi-controller:
 - nova-multi-compute:
 nodes:
