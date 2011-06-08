@@ -1,0 +1,16 @@
+{
+    "id": "glance",
+    "debug": "True",
+    "verbose": "True",
+    // options are 'file', 'swift' or 's3'.
+    "store": "file",
+    "api_bind_port": "9292",
+    "registry_bind_port": "9191",
+    // File store options
+    "filesystem_store_datadir": "/var/lib/glance/images",
+    // Swift store options
+    // S3 store options
+    // SQL connection options
+    "sql_connection": "sqllite:////var/lib/glance/glance.sqllite",
+    "sql_idle_timeout": "3600"
+}

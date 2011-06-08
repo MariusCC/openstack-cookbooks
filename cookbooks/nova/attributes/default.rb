@@ -45,6 +45,8 @@ default[:nova][:images] = []
 set_unless[:nova][:access_key] = secure_password
 set_unless[:nova][:secret_key] = secure_password
 
+default[:glance][:api_bind_host] = ""
+
 default[:nova][:network_type] = "flat" # support "flatdhcp "flat" "dhcpvlan"
 default[:nova][:flat_interface] = "eth0"
 default[:nova][:flat_dns] = "8.8.4.4"

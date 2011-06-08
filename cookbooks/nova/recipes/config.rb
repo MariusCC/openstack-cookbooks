@@ -76,6 +76,16 @@ rabbit_settings = {
   :vhost => rabbit[:nova][:rabbit][:vhost]
 }
 
+#Glance
+glances = search(:node, "recipes:glance\\:\\:api#{env_filter}") || []
+if glances.length > 0
+  glance = glances[0]
+else
+  glance = node
+end
+Chef::Log.info("Glance API found at #{glance[:glance][:api_bind_host]}")
+node[:glance][:api_bind_host] = glance[:glance][:api_bind_host]
+
 #API
 apis = search(:node, "recipes:nova\\:\\:api#{env_filter}") || []
 if apis.length > 0
