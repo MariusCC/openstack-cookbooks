@@ -28,24 +28,16 @@ apt_repository "NovaCoreReleasePPA" do
 end
 #end
 
-#include_recipe "nova::user"
-
 package "nova-common" do
   options "--force-yes -o Dpkg::Options::=\"--force-confdef\""
   action :install
 end
-
-#TODO: do we want to undo the use of the 'nova' user by the nova-* packages?
-#execute "fix #{node[:nova][:userdir]} permissions" do
-#  command "chown #{node[:nova][:user]}:#{node[:nova][:user_group]} #{node[:nova][:user_dir]}"
-#end
 
 #TODO: verify this is even used...
 #env_filter = " AND nova_config_environment:#{node[:nova][:config][:environment]}"
 env_filter = ""
 
 #database address
-#if node[:nova][:mysql]
 package "python-mysqldb"
 mysqls = search(:node, "recipes:nova\\:\\:mysql#{env_filter}") || []
 if mysqls.length > 0
@@ -57,7 +49,6 @@ Chef::Log.info("Mysql server found at #{mysql[:mysql][:bind_address]}")
 mysql_address = mysql[:mysql][:bind_address]
 #mysql_address = Barclamp::Inventory.get_network_by_type(mysql, "admin").address if mysql_address.nil?
 sql_connection = "mysql://#{mysql[:nova][:db][:user]}:#{mysql[:nova][:db][:password]}@#{mysql_address}/#{mysql[:nova][:db][:database]}"
-#end
 
 #rabbit address
 rabbits = search(:node, "recipes:nova\\:\\:rabbit#{env_filter}") || []
@@ -76,15 +67,15 @@ rabbit_settings = {
   :vhost => rabbit[:nova][:rabbit][:vhost]
 }
 
-#Glance
-glances = search(:node, "recipes:glance\\:\\:api#{env_filter}") || []
+#Glance address
+glances = search(:node, "recipes:glance\\:\\:api") || []
 if glances.length > 0
   glance = glances[0]
 else
   glance = node
 end
-Chef::Log.info("Glance API found at #{glance[:glance][:api_bind_host]}")
-node[:glance][:api_bind_host] = glance[:glance][:api_bind_host]
+glance_api = glance[:glance][:api_bind_host]
+Chef::Log.info("Glance API found at #{glance_api}")
 
 #API
 apis = search(:node, "recipes:nova\\:\\:api#{env_filter}") || []
@@ -127,10 +118,11 @@ template "/etc/nova/nova.conf" do
   group "root"
   mode 0644
   variables(
-            :sql_connection => sql_connection,
-            :rabbit_settings => rabbit_settings,
-            :s3_host => objectstore[:nova][:my_ip],
-            :cc_host => api[:nova][:my_ip]
-            )
+    :sql_connection => sql_connection,
+    :rabbit_settings => rabbit_settings,
+    :glance_api => glance_api,
+    :s3_host => objectstore[:nova][:my_ip],
+    :cc_host => api[:nova][:my_ip]
+    )
   notifies :run, resources(:execute => "nova-manage db sync"), :immediately
 end
