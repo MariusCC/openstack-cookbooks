@@ -8,6 +8,6 @@ run_list(
   "recipe[nova::network]",
   "recipe[nova::objectstore]",
   "recipe[nova::scheduler]",
-  "recipe[nova::project]"
+  "recipe[nova::project]",
   "role[nova-multi-compute]"
   )
