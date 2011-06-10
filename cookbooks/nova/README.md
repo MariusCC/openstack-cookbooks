@@ -2,8 +2,6 @@ Description
 ===========
 Cookbook and recipes for deploying OpenStack Nova.
 
-This Chef repository was originally based on the work of Anso Labs' OpenStack-Cookbooks (https://github.com/ansolabs/openstack-cookbooks). It is intended for deploying the point-release codenamed "Cactus", other branches will be added with each release.
-
 Requirements
 ============
 Written and tested with Ubuntu 10.04 and 10.10 and Chef 0.10.0. 
@@ -21,54 +19,47 @@ Recipes
 =======
 api
 ---
+Installs the `nova-api` service.
 
 config
 ------
+Shared nova dependencies and writes out the `nova.conf` file.
 
 compute
 -------
-Provides the compute functionality, currently depends on KVM.
+Installs the `nova-compute` service and currently depends on KVM.
 
 dashboard
 ---------
-
-filevg
-------
-
-finalize
---------
-The last cleanup steps of the install.
+Untested.
 
 mysql
 -----
+Installs and configures MySQL for use by Nova.
 
 network
 -------
+Installs the `nova-network` service.
 
 objectstore
 -----------
-
-openldap
---------
+Installs the `nova-objectstore` service.
 
 project
 -------
-Create Nova certifications, per http://wiki.openstack.org/NovaInstall/MultipleServer
-Creates Projects
-
+Configures the Nova project, network and permissions.
 
 rabbit
 ------
+Installs and configures RabbitMQ for use by Nova.
 
 scheduler
 ---------
-
-user
-----
-Creates the 'nova' user.
+Installs the `nova-scheduler` service.
 
 volume
 ------
+Untested.
 
 License
 =======

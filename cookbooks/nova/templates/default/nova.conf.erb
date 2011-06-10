@@ -24,6 +24,8 @@
 --rabbit_password=<%= @rabbit_settings[:password] %>
 --rabbit_virtual_host=<%= @rabbit_settings[:vhost] %>
 <% end -%>
+--image_service=nova.image.glance.GlanceImageService
+--glance_host=<%= @glance_api %>
 <% if node[:nova][:network_type] == "flat" -%>
 --network_manager=nova.network.manager.FlatManager
 --fixed_range=<%= node[:nova][:fixed_range] %>

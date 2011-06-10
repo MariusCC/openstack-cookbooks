@@ -59,20 +59,16 @@ execute "unzip -o /var/lib/nova/nova.zip -d #{node[:nova][:user_dir]}/" do
   not_if {File.exists?("#{node[:nova][:user_dir]}/novarc")}
 end
 
-execute "cat #{node[:nova][:user_dir]}/novarc >> #{node[:nova][:user_dir]}/.bashrc" do
-  user node[:nova][:user]
-  not_if {File.exists?("#{node[:nova][:user_dir]}/.bashrc")}
+link "#{node[:nova][:user_dir]}/.bashrc" do
+  to "#{node[:nova][:user_dir]}/novarc"
+  owner node[:nova][:user]
+  group node[:nova][:user_group]
 end
 
-execute "ln -s #{node[:nova][:user_dir]}/.bashrc #{node[:nova][:user_dir]}/.profile" do
-  user node[:nova][:user]
-  not_if {File.exists?("#{node[:nova][:user_dir]}/.profile")}
-end
-
-#for the euca2ools
-execute "ln -s #{node[:nova][:user_dir]}/.bashrc #{node[:nova][:user_dir]}/.eucarc" do
-  user node[:nova][:user]
-  not_if {File.exists?("#{node[:nova][:user_dir]}/.eucarc")}
+link "#{node[:nova][:user_dir]}/.profile" do
+  to "#{node[:nova][:user_dir]}/novarc"
+  owner node[:nova][:user]
+  group node[:nova][:user_group]
 end
 
 #generate a private key
@@ -103,58 +99,3 @@ execute "euca-authorize --config #{node[:nova][:user_dir]}/novarc -P tcp -p 22 d
   user node[:nova][:user]
   not_if {groups.stdout.include?("tcp")}
 end
-
-#debug output
-# execute "nova-manage service list" do
-#   user node[:nova][:user]
-# end
-
-#download and install AMIs
-(node[:nova][:images] or []).each do |image|
-  #get the filename of the image
-  filename = image.split('/').last
-  execute "uec-publish-tarball #{filename} nova_amis x86_64" do
-    cwd "#{node[:nova][:user_dir]}/images/"
-    #need EC2_URL, EC2_ACCESS_KEY, EC2_SECRET_KEY, EC2_CERT, EC2_PRIVATE_KEY, S3_URL, EUCALYPTUS_CERT for environment
-    environment ({
-                   'EC2_URL' => "http://#{node[:nova][:api]}:8773/services/Cloud",
-                   'EC2_ACCESS_KEY' => node[:nova][:access_key],
-                   'EC2_SECRET_KEY' => node[:nova][:secret_key],
-                   'EC2_CERT_' => "#{node[:nova][:user_dir]}/cert.pem",
-                   'EC2_PRIVATE_KEY_' => "#{node[:nova][:user_dir]}/pk.pem",
-                   'S3_URL' => "http://#{node[:nova][:api]}:3333", #TODO need to put S3 into attributes instead of assuming API
-                   'EUCALYPTUS_CERT' => "#{node[:nova][:user_dir]}/cacert.pem"
-                 })
-    user node[:nova][:user]
-    action :nothing
-  end
-  remote_file image do
-    source image
-    path "#{node[:nova][:user_dir]}/images/#{filename}"
-    owner node[:nova][:user]
-    action :create_if_missing
-    notifies :run, resources(:execute => "uec-publish-tarball #{filename} nova_amis x86_64"), :immediately
-  end
-end
-
-# #debug output
-# execute "euca-describe-images" do
-#   user node[:nova][:user]
-# end
-
-#if not glance
-
-# in /images/
-
-# mkdir kernel image "mykernel_image"
-# json file from one with "aki"
-# make up id as "mykernel_id"
-
-# mkdir ami image "myami_image"
-# json file from one with "ami"
-# kernel_id "mykernel_id"
-# id "random"
-
-# execute "nova-manage image convert /var/lib/nova/images" do
-#   user 'nova'
-# end

@@ -1,7 +1,5 @@
 Description
 ===========
-!!!CURRENTLY VERY BROKEN WHILE REFACTORING!!!
-
 The goal for this set of cookbooks is to provide a set of roles and cookbooks to deploy OpenStack Compute, Object Storage and Image Registry and Delivery Service (Nova, Swift and Glance respectively) with Chef.
 
 This Chef repository was forked from Anso Labs' OpenStack-Cookbooks (https://github.com/ansolabs/openstack-cookbooks) shortly after "bexar" was released (it is no longer actively tracking that repository). It is intended for deploying the stable releases and currently supports "Cactus", other releases will be supported as they become available.
@@ -9,6 +7,28 @@ This Chef repository was forked from Anso Labs' OpenStack-Cookbooks (https://git
 Requirements
 ============
 Written and tested with Ubuntu 10.04 and 10.10 and Chef 0.9.16 and later. 
+
+openstack Data Bag
+==================
+In order to manage configuration of our OpenStack cloud, we will use the `openstack` data bag.
+
+```
+% knife data bag create openstack
+% knife data bag from file openstack data_bags/openstack/defaults.json
+```
+
+Where the contents of the included `defaults.json` are:
+
+```json
+{
+    "id": "defaults",
+    "images": [
+        "http://c0179148.cdn1.cloudfiles.rackspacecloud.com/ubuntu1010-UEC-localuser-image.tar.gz"
+    ]
+}
+```
+
+* `images`: List of the AMIs to load into the system. You may want to store these locally and update the item.
 
 Usage
 =====

@@ -1,0 +1,6 @@
+{
+    "id": "defaults",
+    "images": [
+        "http://192.168.11.5/ubuntu1010-UEC-localuser-image.tar.gz" 
+    ]
+}
