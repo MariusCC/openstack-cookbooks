@@ -37,6 +37,38 @@ template node[:glance][:config_file] do
   mode 0644
 end
 
+#load in the AMIs
+directory "#{node[:glance][:working_directory]}/images" do
+  owner node[:glance][:user]
+  group "root"
+  mode 0755
+end
+
+#get the 'openstack' data bag 'images'['images'] list of hashes
+images = data_bag_item('openstack', 'images')
+
+(images.keys or []).each do |image|
+  next if image == 'id'
+  #get the filename of the image
+  filename = image.split('/').last
+  
+  # execute "glance add #{filename} nova_amis #{image['arch']}" do
+  #   cwd "#{node[:nova][:user_dir]}/images/"
+  #   user node[:nova][:user]
+  #   action :nothing
+  # end
+  
+  remote_file filename do
+    source image
+    path "#{node[:glance][:working_directory]}/images/#{filename}"
+    owner node[:glance][:user]
+    action :create_if_missing
+    #notifies :run, resources(:execute => "uec-publish-tarball #{filename} nova_amis x86_64"), :immediately
+  end
+end
+
+
+
 # (node[:nova][:images] or []).each do |image|
 #   #get the filename of the image
 #   filename = image.split('/').last
@@ -77,35 +109,6 @@ end
 # 	touch /var/lib/glance/tty_setup
 #   EOH
 #   not_if do File.exists?("/var/lib/glance/tty_setup") end
-# end
-
-
-#download and install AMIs
-# (node[:nova][:images] or []).each do |image|
-#   #get the filename of the image
-#   filename = image.split('/').last
-#   execute "uec-publish-tarball #{filename} nova_amis x86_64" do
-#     cwd "#{node[:nova][:user_dir]}/images/"
-#     #need EC2_URL, EC2_ACCESS_KEY, EC2_SECRET_KEY, EC2_CERT, EC2_PRIVATE_KEY, S3_URL, EUCALYPTUS_CERT for environment
-#     environment ({
-#                    'EC2_URL' => "http://#{node[:nova][:api]}:8773/services/Cloud",
-#                    'EC2_ACCESS_KEY' => node[:nova][:access_key],
-#                    'EC2_SECRET_KEY' => node[:nova][:secret_key],
-#                    'EC2_CERT_' => "#{node[:nova][:user_dir]}/cert.pem",
-#                    'EC2_PRIVATE_KEY_' => "#{node[:nova][:user_dir]}/pk.pem",
-#                    'S3_URL' => "http://#{node[:nova][:api]}:3333", #TODO need to put S3 into attributes instead of assuming API
-#                    'EUCALYPTUS_CERT' => "#{node[:nova][:user_dir]}/cacert.pem"
-#                  })
-#     user node[:nova][:user]
-#     action :nothing
-#   end
-#   remote_file image do
-#     source image
-#     path "#{node[:nova][:user_dir]}/images/#{filename}"
-#     owner node[:nova][:user]
-#     action :create_if_missing
-#     notifies :run, resources(:execute => "uec-publish-tarball #{filename} nova_amis x86_64"), :immediately
-#   end
 # end
 
 # #debug output

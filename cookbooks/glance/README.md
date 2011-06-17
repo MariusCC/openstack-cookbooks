@@ -20,14 +20,8 @@ registry
 --------
 common and service
 
-setup
------
-includes common, adds tty linux
-
 TODO
 ====
-- rewrite setup.rb to use Chef Resources(merge with common?)
-- move away from hard-coded tty image to an array of downloads
 - can glance use the mysql for sqlconnection from nova(does it even matter?)
 
 License

@@ -10,25 +10,26 @@ Written and tested with Ubuntu 10.04 and 10.10 and Chef 0.9.16 and later.
 
 openstack Data Bag
 ==================
-In order to manage configuration of our OpenStack cloud, we will use the `openstack` data bag.
+In order to manage configuration of our OpenStack cloud, we will use the `openstack` data bag. You will need to configure each of the following items and load them into the `openstack` data bag when ready.
 
 ```
 % knife data bag create openstack
-% knife data bag from file openstack data_bags/openstack/defaults.json
+% knife data bag from file openstack data_bags/openstack/glance.json
+% knife data bag from file openstack data_bags/openstack/images.json
+% knife data bag from file openstack data_bags/openstack/nova.json
 ```
 
-Where the contents of the included `defaults.json` are:
+nova
+----
+The `nova` item for the `openstack` data bag contains the settings for configuring Nova.
 
-```json
-{
-    "id": "defaults",
-    "images": [
-        "http://c0179148.cdn1.cloudfiles.rackspacecloud.com/ubuntu1010-UEC-localuser-image.tar.gz"
-    ]
-}
-```
+glance
+------
+The `glance` item for the `openstack` data bag contains the settings for configuring Glance.
 
-* `images`: List of the AMIs to load into the system. You may want to store these locally and update the item.
+images
+------
+The `images` item for the `openstack` data bag contains the locations and contents of the various AMIs to load into the system to make available for Nova. Good places to go for AMIs include https://uec-images.ubuntu.com and http://www.eucalyptussoftware.com/downloads/eucalyptus-images/list.php. You may want to copy these to a local site for future deployments.
 
 Usage
 =====
