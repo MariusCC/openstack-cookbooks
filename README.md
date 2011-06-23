@@ -6,7 +6,11 @@ This Chef repository was forked from Anso Labs' OpenStack-Cookbooks (https://git
 
 Requirements
 ============
-Written and tested with Ubuntu 10.04 and 10.10 and Chef 0.9.16 and later. 
+Written and tested with Ubuntu 10.04 and 10.10 and Chef 0.10 and later. 
+
+Roles
+=====
+You can use the command `rake roles` to upload all the roles provided.
 
 openstack Data Bag
 ==================
@@ -19,6 +23,11 @@ In order to manage configuration of our OpenStack cloud, we will use the `openst
 % knife data bag from file openstack data_bags/openstack/nova.json
 ```
 
+conversely you can also just use
+```
+% rake databag:upload_all
+```
+
 nova
 ----
 The `nova` item for the `openstack` data bag contains the settings for configuring Nova.
@@ -29,7 +38,7 @@ The `glance` item for the `openstack` data bag contains the settings for configu
 
 images
 ------
-The `images` item for the `openstack` data bag contains the locations and contents of the various AMIs to load into the system to make available for Nova. Good places to go for AMIs include https://uec-images.ubuntu.com and http://www.eucalyptussoftware.com/downloads/eucalyptus-images/list.php. You may want to copy these to a local site for future deployments.
+The `images` item for the `openstack` data bag contains the locations, contents and metadata of the various AMIs to load into the system to make available for Nova. Good places to go for AMIs include https://uec-images.ubuntu.com and http://www.eucalyptussoftware.com/downloads/eucalyptus-images/list.php. You may want to copy these to a local site for future deployments.
 
 Usage
 =====

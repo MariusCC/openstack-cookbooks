@@ -26,6 +26,12 @@ end
 #get the 'openstack' data bag 'images'['images'] list of hashes
 images = data_bag_item('openstack', 'images')
 
+cookbook_file "#{node[:glance][:working_directory]}/glance-uploader.bash" do
+  source "glance-uploader.bash"
+  mode "0755"
+end
+
+
 (images.keys or []).each do |image|
   next if image == 'id'
   #get the filename of the image
@@ -53,37 +59,27 @@ images = data_bag_item('openstack', 'images')
     action :nothing
   end
   
-  glance_command = "glance-upload --host=#{node.ipaddress} --disk-format=ami --container-format=ami --type=machine"
-  glance_command += " --kernel=#{images[image]['kernel']}" if images[image]['kernel']
-  glance_command += " --ramdisk=#{images[image]['ramdisk']}" if images[image]['ramdisk']
-  glance_command += " #{images[image]['image']} #{images[image]['image']}"
+  glance_upload = "#{node[:glance][:working_directory]}/glance-uploader.bash -h #{node.ipaddress}"
+  glance_upload += " -a #{images[image]['arch']}"
+  glance_upload += " -d #{images[image]['distro']}"
+  glance_upload += " -e #{images[image]['kernel_version']}"
+  glance_upload += " -i #{images[image]['image']}"
+  glance_upload += " -k #{images[image]['kernel']}"
+  glance_upload += " -v #{images[image]['version']}"
 
-  execute glance_command do
+  execute glance_upload do
     cwd "#{node[:glance][:working_directory]}/images/#{filename}-tmp"
     user node[:glance][:user]
     subscribes :run, resources(:execute => "tar -xf #{node[:glance][:working_directory]}/images/#{filename}"), :immediately
     action :nothing
   end
   
-  glance_update = "glance update --host=#{node.ipaddress} #{images[image]['image']} type=machine uploader=#{node['glance']['user']}@#{node.fqdn}"
-  glance_update += " arch=#{images[image]['arch']}" if images[image]['arch']
-  glance_update += " distro=#{images[image]['distro']}" if images[image]['distro']
-  glance_update += " version=#{images[image]['version']}" if images[image]['version']
-
-  execute glance_update do
-    command "echo #{glance_update}"
-    cwd "#{node[:glance][:working_directory]}/images/#{filename}-tmp"
-    user node[:glance][:user]
-    subscribes :run, resources(:execute => glance_command)
+  directory "delete #{node[:glance][:working_directory]}/images/#{filename}-tmp" do
+    path "#{node[:glance][:working_directory]}/images/#{filename}-tmp"
+    subscribes :delete, resources(:execute => glance_upload)
+    recursive true
     action :nothing
   end
-
-  # directory "delete #{node[:glance][:working_directory]}/images/#{filename}-tmp" do
-  #   path "#{node[:glance][:working_directory]}/images/#{filename}-tmp"
-  #   subscribes :delete, resources(:execute => glance_update)
-  #   recursive true
-  #   action :nothing
-  # end
 
 end
 

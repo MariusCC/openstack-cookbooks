@@ -1,10 +1,10 @@
 DESCRIPTION
 ===========
-Chef Cookbook to install and configure Glance API and Registry.
+Chef Cookbook to install and configure Glance API and Registry and to upload AMIs.
 
 REQUIREMENTS
 ============
-Requires access to Glance packages and uses the `openstack` data bag item `images`.
+Requires access to Glance packages and uses the `openstack` data bag item `images`. Includes the `glance-uploader.bash` from Kevin Bringard's http://github.com/kevinbringard/OpenStack-tools.
 
 Recipes
 =======
