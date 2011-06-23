@@ -4,7 +4,7 @@ Chef Cookbook to install and configure Glance API and Registry.
 
 REQUIREMENTS
 ============
-Requires access to Glance packages.
+Requires access to Glance packages and uses the `openstack` data bag item `images`.
 
 Recipes
 =======
@@ -19,6 +19,10 @@ package, directories, template
 registry
 --------
 common and service
+
+upload
+------
+uploads the AMIs specified in the `openstack` data bag `images` item.
 
 TODO
 ====

@@ -15,9 +15,9 @@
         "version": "10.10"
     },
     "http://eucalyptussoftware.com/downloads/eucalyptus-images/euca-fedora-11-i386.tar.gz": {
-        "image": "fedora.11.x86.img",
-        "kernel": "kvm-kernel/vmlinuz-2.6.28-11-server",
-        "ramdisk": "kvm-kernel/initrd.img-2.6.28-11-server",
+        "image": "euca-fedora-11-i386/fedora.11.x86.img",
+        "kernel": "euca-fedora-11-i386/kvm-kernel/vmlinuz-2.6.28-11-server",
+        "ramdisk": "euca-fedora-11-i386/kvm-kernel/initrd.img-2.6.28-11-server",
         "arch": "i386",
         "distro": "Ubuntu",
         "version": "10.04"
