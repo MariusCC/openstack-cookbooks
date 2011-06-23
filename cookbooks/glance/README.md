@@ -1,10 +1,10 @@
 DESCRIPTION
 ===========
-Chef Cookbook to install and configure Glance API and Registry.
+Chef Cookbook to install and configure Glance API and Registry and to upload AMIs.
 
 REQUIREMENTS
 ============
-Requires access to Glance packages.
+Requires access to Glance packages and uses the `openstack` data bag item `images`. Includes the `glance-uploader.bash` from Kevin Bringard's http://github.com/kevinbringard/OpenStack-tools.
 
 Recipes
 =======
@@ -20,14 +20,12 @@ registry
 --------
 common and service
 
-setup
------
-includes common, adds tty linux
+upload
+------
+uploads the AMIs specified in the `openstack` data bag `images` item.
 
 TODO
 ====
-- rewrite setup.rb to use Chef Resources(merge with common?)
-- move away from hard-coded tty image to an array of downloads
 - can glance use the mysql for sqlconnection from nova(does it even matter?)
 
 License
